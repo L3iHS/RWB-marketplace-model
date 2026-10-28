@@ -165,7 +165,7 @@ def main():
         sys.exit(
             "В папке data не хватает файлов:\n  "
             + "\n  ".join(missing)
-            + "\n\nСкачайте их:  bash scripts/download_data.sh"
+            + "\n\nСкачайте их:  docker compose run --rm app setup"
         )
 
     try:

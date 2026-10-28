@@ -3,7 +3,7 @@
 -- а не в проверках сборки (model/90_checks.sql).
 -- Если хоть одна цифра не совпала, скрипт завершается ошибкой.
 --
--- Запуск: bash build.sh answers/99_controls.sql   (или make check)
+-- Запуск: docker compose run --rm app check
 
 CREATE TEMP TABLE controls ON COMMIT DROP AS
 WITH period AS (

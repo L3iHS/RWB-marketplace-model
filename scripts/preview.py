@@ -1,11 +1,11 @@
 """Первые строки каждой таблицы и витрины, в виде таблиц pandas.
 
 Запуск:
-    make preview                                  5 строк, схемы core и mart
-    .venv/bin/python scripts/preview.py -n 10     10 строк
-    .venv/bin/python scripts/preview.py -s raw    схема raw
-    .venv/bin/python scripts/preview.py -t orders только таблицы, в имени которых есть 'orders'
-    .venv/bin/python scripts/preview.py --colwidth 40   шире колонки (длинные id не обрезаются)
+    docker compose run --rm app preview                 5 строк, схемы core и mart
+    docker compose run --rm app preview -n 10           10 строк
+    docker compose run --rm app preview -s raw          схема raw
+    docker compose run --rm app preview -t orders       только таблицы, в имени которых есть 'orders'
+    docker compose run --rm app preview --colwidth 40   шире колонки (длинные id не обрезаются)
 
 Таблицы находятся автоматически через information_schema,
 новые появятся в выводе без правки кода.
@@ -69,7 +69,7 @@ def main():
     with connect() as conn, conn.cursor() as cur:
         tables = list_tables(cur, schemas, args.table)
         if not tables:
-            print("Таблицы не найдены. Модель собрана? Запустите: make build")
+            print("Таблицы не найдены. Модель собрана? Запустите: docker compose run --rm app build")
             return
 
         for schema, table, table_type in tables:

@@ -1,4 +1,6 @@
 services:
+  # База данных. Наружу открыта только на этой машине: 127.0.0.1:5433
+  # (5433, чтобы не мешать базе организаторов на 5432).
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -16,21 +18,35 @@ services:
       - pgdata:/var/lib/postgresql/data
       # SQL-скрипты отсюда выполняются один раз при первом старте
       - ./scripts/init:/docker-entrypoint-initdb.d:ro
-      # сюда кладём CSV с исходными данными: внутри контейнера это /data
-      - ./data:/data:ro
-      - ./model:/model:ro
-      - ./queries:/queries:ro
-      - ./checks:/checks:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U hack -d marketplace"]
       interval: 5s
       timeout: 5s
       retries: 10
 
+  # Проект: Python, зависимости и psql. Все команды — через run.py:
+  #   docker compose run --rm app build
+  # Репозиторий монтируется в /app, поэтому правки видны без пересборки образа,
+  # а результаты (data/, artifacts/) появляются в папке проекта.
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Внутри сети Docker база доступна по имени сервиса и своему порту 5432.
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: hack
+      PGPASSWORD: hack
+    volumes:
+      - .:/app
+
   # Веб-клиент на случай, если DBeaver поставить не получится.
   # По умолчанию НЕ запускается: образ весит около 400 МБ, и если его
   # тянуть при первом старте, кажется, что всё зависло.
   # Запуск при необходимости:  docker compose --profile tools up -d
+  # В pgAdmin сервер регистрируется с хостом postgres и портом 5432.
   pgadmin:
     profiles: ["tools"]
     image: dpage/pgadmin4:8

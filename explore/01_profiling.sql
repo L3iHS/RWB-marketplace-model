@@ -1,6 +1,6 @@
 -- Разведка сырых данных перед проектированием модели.
 -- Каждый блок отвечает на один вопрос к данным. Выводы — в docs/findings.md.
--- Запуск целиком: bash build.sh explore/01_profiling.sql
+-- Запуск целиком: docker compose run --rm app explore
 -- или по одному запросу в pgAdmin (Query Tool).
 
 \pset footer off

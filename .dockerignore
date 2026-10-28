@@ -1,0 +1,7 @@
+# Образу нужен только requirements.txt: код монтируется при запуске.
+# Остальное не отправляем в Docker при сборке образа.
+.git
+.venv
+data
+artifacts
+__pycache__

@@ -1,6 +1,6 @@
 """Выгружает ответы на вопросы 1–5 в CSV и JSON (artifacts/answers/); только чтение модели.
 
-Запуск: make answers   (или .venv/bin/python scripts/answers.py)
+Запуск: docker compose run --rm app answers
 """
 import csv
 import json

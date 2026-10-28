@@ -7,7 +7,7 @@ EdgeCases — на крошечном искусственном наборе в
 каждый тест проверяет одно правило модели на случае, где ответ известен заранее.
 Временная база удаляется после тестов.
 
-Запуск: make test   (или .venv/bin/python -m unittest discover -s tests -v)
+Запуск: docker compose run --rm app test
 """
 import hashlib
 import os
@@ -26,10 +26,11 @@ from db import connect  # noqa: E402
 
 
 def build(dbname, *files, success=True):
-    """Запускает build.sh в указанной базе: без файлов — полную сборку модели."""
+    """Запускает run.py в указанной базе: без файлов — полную сборку модели."""
     env = dict(os.environ, PGDATABASE=dbname)
-    result = subprocess.run(['bash', 'build.sh', *files], cwd=ROOT, env=env,
-                            capture_output=True, text=True)
+    command = ['sql', *files] if files else ['build']
+    result = subprocess.run([sys.executable, 'run.py', *command], cwd=ROOT, env=env,
+                            capture_output=True, text=True, encoding='utf-8')
     if success and result.returncode:
         raise AssertionError(result.stdout + result.stderr)
     return result

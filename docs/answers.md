@@ -2,15 +2,15 @@
 
 Запросы — в [answers/](../answers/), все считаются из витрин `mart`,
 не из `raw` (это проверяет тест). Готовые результаты в CSV и JSON —
-в [artifacts/answers/](../artifacts/answers/), пересобрать: `make answers`.
+в [artifacts/answers/](../artifacts/answers/), пересобрать: `docker compose run --rm app answers`.
 
 Посмотреть результат одного запроса:
 
 ```bash
-bash build.sh answers/01_monthly_revenue.sql
+docker compose run --rm app sql answers/01_monthly_revenue.sql
 ```
 
-Сверка всех ответов с контрольными цифрами: `make check`.
+Сверка всех ответов с контрольными цифрами: `docker compose run --rm app check`.
 Все 10 контрольных значений совпадают; при расхождении команда падает с ошибкой.
 
 ## Общие определения

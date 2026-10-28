@@ -27,45 +27,63 @@
 
 ## Быстрый старт
 
-Нужны Docker и Python 3.10+.
+Нужен только **Docker** (Docker Desktop на Windows и macOS, Docker Engine
+с плагином compose на Linux). Python, psql и библиотеки живут внутри контейнера,
+поэтому команды одинаковые на любой ОС.
 
 ```bash
-make setup    # .venv, данные, PostgreSQL на 127.0.0.1:5433, загрузка raw
-make build    # сборка core и mart с нуля, 26 проверок внутри
-make check    # сверка ответов с контрольными цифрами задания
-make test     # 16 тестов: настоящая выгрузка + искусственные крайние случаи
+git clone -b dev https://github.com/L3iHS/RWB-marketplace-model.git
+cd RWB-marketplace-model
+docker compose run --rm app setup    # скачать данные и загрузить raw
+docker compose run --rm app build    # собрать core и mart, 26 проверок внутри
+docker compose run --rm app check    # сверить ответы с контрольными цифрами
+docker compose run --rm app test     # 16 тестов
 ```
 
-Ещё полезное:
+Первый запуск дольше: Docker скачивает образы и собирает образ проекта (~1–2 минуты).
+
+Все команды:
+
+| Команда | Что делает |
+|---|---|
+| `setup` | Скачивает CSV в `data/`, загружает их в `raw`. Повторно не перезаливает; `setup --reload` — перезалить |
+| `build` | Собирает `core` и `mart` с нуля одной транзакцией; при ошибке остаётся прежняя модель |
+| `check` | Сверяет ответы с контрольными цифрами задания |
+| `test` | Тесты: настоящая выгрузка + искусственные крайние случаи во временной базе |
+| `answers` | Ответы 1–5 в `artifacts/answers/` (CSV и JSON) |
+| `preview` | Первые строки каждой таблицы `core` и `mart` в виде pandas; `preview -n 10 -t orders` |
+| `explore` | Разведка `raw`: ключи, пропуски, связи, деньги |
+| `profile` | Профиль `raw` в `artifacts/profile.json` |
+| `sql ФАЙЛ…` | Выполнить SQL-файлы, например `sql answers/02_top_sellers.sql` |
+
+Каждая команда пишется после `docker compose run --rm app`.
+Справка: `docker compose run --rm app --help`.
+
+Начать с чистого листа (удалить базу вместе с данными):
 
 ```bash
-make answers  # ответы 1–5 в artifacts/answers/ (CSV и JSON)
-make preview  # первые строки каждой таблицы core и mart в виде pandas
-make explore  # разведка raw: ключи, пропуски, связи, деньги
+docker compose down -v
 ```
 
-База этого репозитория работает на порту **5433**, чтобы не мешать базе
-организаторов на 5432. Подключение: `postgresql://hack:hack@localhost:5433/marketplace`.
+**Подключиться к базе** из DBeaver или DataGrip: `localhost:5433`, база `marketplace`,
+логин и пароль `hack` / `hack`. Порт 5433 выбран, чтобы не мешать базе
+организаторов на 5432. Наружу база не открыта — только с этой машины.
 
-Собрать модель в базе организаторов (контейнер `hack_postgres`, порт 5432):
-
-```bash
-CONTAINER=hack_postgres bash build.sh
-```
-
-Python-скриптам тогда нужен `PGPORT=5432`.
+**Без Docker** тоже можно: `python run.py build`, если на машине есть Python 3.11+
+с пакетами из `requirements.txt` и `psql`, а база доступна по `PGHOST` / `PGPORT`.
 
 ## Структура
 
 ```
+run.py      единая точка входа: все команды выше
 model/      SQL-сборка core и mart из raw, выполняется по порядку имён одной транзакцией
 answers/    ответы на вопросы аналитиков и сверка с контрольными цифрами
 tests/      интеграционные тесты модели
 explore/    разведка raw, в сборку не входит
 docs/       модель, ответы, проблемы в данных, стратегия, задание
-scripts/    окружение, загрузка raw, выгрузка ответов, просмотр таблиц
+scripts/    загрузка raw, выгрузка ответов, просмотр таблиц, подключение к базе
 artifacts/  готовые результаты: ответы в CSV/JSON, профиль raw
-build.sh    сборка одной командой (её вызывает make build)
+Dockerfile, docker-compose.yml   окружение: база и контейнер проекта
 ```
 
 ## Документы
