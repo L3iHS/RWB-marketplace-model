@@ -42,6 +42,46 @@ services:
     volumes:
       - .:/app
 
+  # Служебная БД Metabase хранит пользователей, подключения и дашборды.
+  metabase-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: metabase
+      POSTGRES_PASSWORD: metabase_local
+      POSTGRES_DB: metabase
+    volumes:
+      - metabase_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U metabase -d metabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  metabase:
+    image: ${METABASE_IMAGE:-metabase/metabase:latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: metabase-db
+      MB_DB_PORT: 5432
+      MB_DB_DBNAME: metabase
+      MB_DB_USER: metabase
+      MB_DB_PASS: metabase_local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      metabase-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 120s
+      retries: 20
+
   # Веб-клиент на случай, если DBeaver поставить не получится.
   # По умолчанию НЕ запускается: образ весит около 400 МБ, и если его
   # тянуть при первом старте, кажется, что всё зависло.
@@ -64,3 +104,4 @@ services:
 
 volumes:
   pgdata:
+  metabase_pgdata:

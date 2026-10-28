@@ -85,6 +85,25 @@ docker compose down -v
 **Без Docker** тоже можно: `python run.py build`, если на машине есть Python 3.11+
 с пакетами из `requirements.txt` и `psql`, а база доступна по `PGHOST` / `PGPORT`.
 
+## Metabase
+
+Запустить BI-интерфейс вместе с PostgreSQL:
+
+```bash
+docker compose up -d postgres metabase
+```
+
+Открыть http://localhost:3000, создать администратора и добавить PostgreSQL:
+сервер `postgres`, порт `5432`, база `marketplace`, пользователь и пароль
+`hack` / `hack`. Внутри Docker используется порт 5432, с компьютера — 5433.
+Витрины создаются командой `docker compose run --rm app build` после `setup`.
+Настройки и дашборды Metabase сохраняются в отдельной служебной базе и volume.
+Сам отчёт собирается в интерфейсе; готовый дашборд автоматически не создаётся.
+[Подробная инструкция](docs/metabase.md).
+
+`docker compose down -v` удаляет также настройки и дашборды Metabase.
+Для обычной остановки используйте `docker compose stop`.
+
 ## Структура
 
 ```
