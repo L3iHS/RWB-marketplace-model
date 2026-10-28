@@ -43,6 +43,40 @@ services:
     volumes:
       - .:/app
 
+  # API читает одну согласованную версию модели на весь экран.
+  backend:
+    build: .
+    entrypoint: ["uvicorn"]
+    command: ["backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: hack
+      PGPASSWORD: hack
+      PGDATABASE: "${PGDATABASE:-marketplace}"
+    volumes:
+      - .:/app
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 6
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      backend:
+        condition: service_started
+
   # Не запускается без явного --profile ingestion. Первый цикл сразу,
   # следующие — с заданным интервалом; остановка: docker compose stop scheduler.
   scheduler:

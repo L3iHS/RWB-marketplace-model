@@ -112,6 +112,19 @@ SELECT 'календарь: покрывает все покупки',
        )
 UNION ALL
 
+-- Историчность: один адрес заказа, одна текущая категория, факт ссылается
+-- на конкретную версию (её существование дополнительно гарантирует FK).
+SELECT 'история: адрес для каждого заказа',
+       (SELECT count(*) FROM core.order_addresses) = (SELECT count(*) FROM core.orders)
+UNION ALL
+SELECT 'история: текущая категория каждого товара',
+       (SELECT count(*) FROM core.product_category_history WHERE observed_to IS NULL) =
+       (SELECT count(*) FROM core.products)
+       AND NOT EXISTS (SELECT 1 FROM core.products p
+                       JOIN core.product_category_history h USING(product_id)
+                       WHERE h.observed_to IS NULL AND h.category_key <> p.category_key)
+UNION ALL
+
 -- 9. Нет критических проблем качества (например, доставленного заказа без позиций).
 SELECT 'качество: нет проблем уровня error',
        NOT EXISTS (SELECT 1 FROM mart.quality_issues WHERE severity = 'error');

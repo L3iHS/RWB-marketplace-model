@@ -5,3 +5,8 @@
 data
 artifacts
 __pycache__
+frontend
+backend/__pycache__
+docs/internal
+.agents
+.codex

@@ -41,7 +41,7 @@ def append_rows(source, destination, rows, columns):
         writer.writerows(rows)
 
 
-def generate(source, output, days=5, orders_per_day=20, seed=42):
+def generate(source, output, days=5, orders_per_day=20, seed=42, with_history=False):
     source, output = Path(source).resolve(), Path(output).resolve()
     if output.exists():
         raise ValueError(f'{output}: каталог уже существует; готовая демонстрация не перезаписывается')
@@ -49,6 +49,8 @@ def generate(source, output, days=5, orders_per_day=20, seed=42):
         raise ValueError('Число дней и заказов должно быть положительным')
     base_hashes = {name: sha256(source / name) for name in FILES}
     identity = dict(base_sha256=base_hashes, days=days, orders_per_day=orders_per_day, seed=seed)
+    if with_history:
+        identity['with_history'] = True
     source_id = 'synthetic-' + hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:16]
     namespace = uuid.uuid5(uuid.NAMESPACE_URL, source_id)
 
@@ -75,6 +77,13 @@ def generate(source, output, days=5, orders_per_day=20, seed=42):
     start = (latest + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     new_product = dict(products[0], product_id=identifier('product', 0))
     new_seller = dict(sellers[0], seller_id=identifier('seller', 0))
+    history_change = None
+    if with_history:
+        categories = read_rows(source, 'product_category_translation')
+        new_category = next((row['product_category_name'] for row in categories
+                             if row['product_category_name'] != new_product['product_category_name']), None)
+        if new_category is None:
+            raise ValueError('Для демонстрации истории нужны две категории в справочнике')
     plans = []
     for day in range(days):
         for index in range(orders_per_day):
@@ -109,6 +118,21 @@ def generate(source, output, days=5, orders_per_day=20, seed=42):
             plans.append(dict(number=number, day=day, profile=profile, items=items, payments=payments,
                               purchase=purchase, carrier=carrier, delivery=delivery,
                               canceled=lifecycle == 3, late=lifecycle == 2))
+    if with_history:
+        first_profile = plans[0]['profile']
+        new_address = next((row for row in customers
+                            if row['customer_state'] != first_profile['customer_state']
+                            and row['customer_city'] != first_profile['customer_city']), None)
+        if new_address is None:
+            raise ValueError('Для демонстрации истории нужны адреса в разных городах и штатах')
+        history_change = dict(
+            from_sequence=3, product_id=new_product['product_id'], order_id=identifier('order', 0),
+            customer_id=first_profile['customer_id'],
+            category_before=new_product['product_category_name'], category_after=new_category,
+            address_before={key: first_profile[key] for key in ('customer_state', 'customer_city')},
+            address_after={key: new_address[key] for key in ('customer_state', 'customer_city')},
+            notice='С третьего снимка меняются текущая категория синтетического товара и адрес профиля. '
+                   'Ранее опубликованные позиции и адрес первого заказа сохраняются в истории модели.')
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='.simulation-', dir=output.parent) as temporary:
         stage = Path(temporary)
@@ -116,7 +140,10 @@ def generate(source, output, days=5, orders_per_day=20, seed=42):
         for day in range(days):
             cutoff = start + timedelta(days=day + 1) - timedelta(seconds=1)
             extras = {table: [] for table, _ in FILES.values()}
-            extras['products'].append(new_product)
+            snapshot_product = dict(new_product)
+            if with_history and day >= 2:
+                snapshot_product['product_category_name'] = new_category
+            extras['products'].append(snapshot_product)
             extras['sellers'].append(new_seller)
             statuses = {}
             for plan in plans:
@@ -134,7 +161,11 @@ def generate(source, output, days=5, orders_per_day=20, seed=42):
                     order_delivered_carrier_date=timestamp(plan['carrier']) if shipped else '',
                     order_delivered_customer_date=timestamp(plan['delivery']) if delivered else '',
                     order_estimated_delivery_date=timestamp((purchase + timedelta(days=2)).replace(hour=23, minute=59, second=59))))
-                extras['customers'].append(plan['profile'])
+                profile = dict(plan['profile'])
+                if with_history and day >= 2 and plan['number'] == 0:
+                    profile.update({key: new_address[key] for key in
+                                    ('customer_state', 'customer_city', 'customer_zip_code_prefix')})
+                extras['customers'].append(profile)
                 extras['order_items'].extend(plan['items'])
                 extras['order_payments'].extend(plan['payments'])
                 review_time = plan['delivery'] + timedelta(hours=1)
@@ -152,6 +183,8 @@ def generate(source, output, days=5, orders_per_day=20, seed=42):
                             synthetic_orders=(day + 1) * orders_per_day, statuses=statuses,
                             base_sha256=base_hashes,
                             notice='Вымышленные операции; исторические строки Olist сохранены. Это не поток WB.')
+            if with_history:
+                metadata['history_scenario'] = dict(history_change, applied=day >= 2)
             manifest = seal_batch(batch, source_id, day + 1, 'synthetic', simulation=metadata)
             snapshots.append(dict(directory=batch.name, sequence=day + 1, **metadata,
                                   orders=manifest['files'][orders_name]['rows']))

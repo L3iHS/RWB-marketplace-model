@@ -21,7 +21,7 @@ raw  ──02_load──▶  core  ──03_marts──▶  mart
 | `01_schema.sql` | Таблицы `core` с ключами, связями и ограничениями |
 | `02_load.sql` | Переносит данные из `raw` с приведением типов |
 | `03_marts.sql` | Представления `mart` |
-| `90_checks.sql` | 26 проверок: строки, суммы, разрезы выручки, календарь, качество. Падает, если что-то не сошлось |
+| `90_checks.sql` | 28 проверок: строки, суммы, разрезы выручки, календарь, качество. Падает, если что-то не сошлось |
 
 `run.py build` выполняет все файлы **одной транзакцией**. Если ошибка случится
 в любом месте, даже после удаления схем, изменения откатятся целиком,
@@ -44,6 +44,10 @@ erDiagram
     products ||--o{ order_items : "товар"
     sellers ||--o{ order_items : "продавец"
     categories ||--o{ products : "категория"
+    products ||--o{ product_category_history : "версии категории"
+    categories ||--o{ product_category_history : "историческая категория"
+    product_category_history ||--o{ order_items : "категория позиции"
+    orders ||--|| order_addresses : "сохранённый адрес"
 
     customers {
         text customer_unique_id PK
@@ -73,6 +77,7 @@ erDiagram
         text order_id PK, FK
         integer order_item_id PK
         text product_id FK
+        integer category_version_no FK
         text seller_id FK
         timestamp shipping_limit_at
         numeric price
@@ -112,6 +117,20 @@ erDiagram
         boolean is_unknown
         text name
     }
+    product_category_history {
+        text product_id PK, FK
+        integer version_no PK
+        text category_key FK
+        timestamptz observed_from
+        timestamptz observed_to
+    }
+    order_addresses {
+        text order_id PK, FK
+        text zip_code_prefix
+        text city
+        text state
+        timestamptz observed_at
+    }
     sellers {
         text seller_id PK
         text zip_code_prefix
@@ -132,6 +151,8 @@ erDiagram
 | `order_statuses` | статус заказа + флаг «доставлен» | `status_code` | 8 |
 | `categories` | категория товара, включая `__unknown__` | `category_key` | 74 |
 | `products` | карточка товара | `product_id` | 32 951 |
+| `product_category_history` | наблюдаемая версия категории товара | `(product_id, version_no)` | 32 951 в исходном снимке |
+| `order_addresses` | адрес, зафиксированный для заказа | `order_id` | 99 441 |
 | `sellers` | продавец | `seller_id` | 3 095 |
 | `orders` | заказ любого статуса | `order_id` | 99 441 |
 | `order_items` | **одна единица товара** в заказе | `(order_id, order_item_id)` | 112 650 |
@@ -145,6 +166,9 @@ erDiagram
 на каждый заказ, и по нему все покупатели выглядят разовыми. Человек вынесен
 в `customers`, а адрес остался в `customer_order_profiles`: один человек
 может заказывать на разные адреса, у каждого заказа свой адрес.
+При регулярном обновлении адрес заказа сохраняет `order_addresses`, даже если
+текущий профиль поменялся. Позиция хранит версию категории: прежние продажи не
+переносятся вместе с изменением карточки товара. [Историчность и её границы](history.md).
 
 **В `core` лежат заказы всех статусов.** Если отфильтровать недоставленные
 при загрузке, потеряем отмены, а с ними и вопросы вида «какая доля отмен».
@@ -236,7 +260,7 @@ erDiagram
 Первичный `build` пересоздаёт `core`/`mart` из исходного `raw`.
 Регулярный `ingest` принимает полный снимок восьми CSV: сохраняет исходный `raw`,
 использует тот же SQL преобразований и заменяет строки стабильных таблиц одной
-транзакцией с 26 инвариантами до COMMIT. Версия и указатель публикуются вместе с данными.
+транзакцией с 28 инвариантами до COMMIT. Версия и указатель публикуются вместе с данными.
 Служебные `ops.dataset_versions`, `ops.current_dataset`, `ops.ingestion_attempts`
 содержат историю/диагностику, не меняя бизнес-гранулярность ER-диаграммы.
 [Контракт, синтетическая демонстрация и планировщик](ingestion.md).

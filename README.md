@@ -23,6 +23,10 @@
 
 Основной стек — PostgreSQL 16 и SQL. Python используется для загрузки, выгрузки ответов и тестов. Локальное окружение запускается через Docker Compose.
 
+**Дашборд:** [localhost:3000](http://localhost:3000) после запуска backend/frontend.
+[Инструкция и показатели](docs/dashboard.md), [история категорий и адресов](docs/history.md),
+[записка о решениях](docs/decisions.md).
+
 **С чего начать:** [docs/model.md](docs/model.md) — устройство модели и схема,
 [docs/answers.md](docs/answers.md) — ответы и контрольные цифры.
 
@@ -36,9 +40,10 @@
 git clone -b dev https://github.com/L3iHS/RWB-marketplace-model.git
 cd RWB-marketplace-model
 docker compose run --rm app setup    # скачать данные и загрузить raw
-docker compose run --rm app build    # собрать core и mart, 26 проверок внутри
+docker compose run --rm app build    # собрать core и mart, 28 проверок внутри
 docker compose run --rm app check    # сверить ответы с контрольными цифрами
-docker compose run --rm app test     # модель, контрольные числа и отказы ввода/вывода
+docker compose run --rm app test     # модель, API, история, контроли и отказы
+docker compose up -d --build backend frontend  # дашборд http://localhost:3000
 ```
 
 Первый запуск дольше: Docker скачивает образы и собирает образ проекта (~1–2 минуты).
@@ -89,7 +94,7 @@ docker compose run --rm -e PGDATABASE=marketplace_demo app sql scripts/sql/demo_
 `artifacts/answers/` содержит проверенный эталон исходной выгрузки.
 Команда `answers` публикует новые результаты отдельно: она печатает каталог
 поколения в `artifacts/runtime/answers/generations/`. Файл `current.json`
-указывает на последний успешно подготовленный комплект. Внутри — пять CSV,
+указывает на последний успешно подготовленный комплект. Внутри — CSV ответов 1–10,
 `results.json`, точный SQL и `manifest.json` с хешами файлов, данных и схемы БД.
 
 Ошибка SQL или записи до публикации сохраняет прежний указатель и результаты.
@@ -129,10 +134,13 @@ Dockerfile, docker-compose.yml   окружение: база и контейн�
 | Документ | О чём |
 |---|---|
 | [docs/model.md](docs/model.md) | Таблицы, их уровень и ключи, витрины, проверки, ключевые решения |
-| [docs/answers.md](docs/answers.md) | Ответы на вопросы 1–5 и определения |
+| [docs/answers.md](docs/answers.md) | Ответы на вопросы 1–10 и определения |
 | [docs/findings.md](docs/findings.md) | Что нашли при разведке данных |
 | [docs/data_issues.md](docs/data_issues.md) | Проблемы в данных и как модель с ними обходится |
 | [docs/strategy.md](docs/strategy.md) | Стратегия развития модели и технологий |
+| [docs/dashboard.md](docs/dashboard.md) | Собственный дашборд, показатели, фильтры, ответы 6–10 и история |
+| [docs/history.md](docs/history.md) | Вброс: версии категорий и адрес заказа |
+| [docs/decisions.md](docs/decisions.md) | Короткая записка о решениях |
 | [docs/ingestion.md](docs/ingestion.md) | Новые полные снимки, безопасная публикация, синтетическая демонстрация и планировщик |
 
 ## Критерии оценки
@@ -151,7 +159,7 @@ Dockerfile, docker-compose.yml   окружение: база и контейн�
 
 ## Статус
 
-Готово: модель, проверки, тесты, ответы на вопросы 1–5, стратегия,
+Готово: модель, проверки, тесты, ответы на вопросы 1–10, стратегия,
 приём полных снимков с версиями, синтетическая демонстрация и необязательный планировщик.
-Впереди: вопросы 6–10 из середины хакатона, записка о решениях,
-концепция дашборда, описание использования ИИ.
+Готовы собственный дашборд с ответами 6–10 и историей, сохранение категории/адреса заказа,
+записка о решениях. SQL-рабочее место и подключение реального источника — дальнейшее развитие.

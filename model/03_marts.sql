@@ -45,8 +45,8 @@ WITH items AS (
 SELECT o.order_id,
        p.customer_unique_id,
        o.customer_id,
-       p.city  AS customer_city,
-       p.state AS customer_state,
+       a.city  AS customer_city,
+       a.state AS customer_state,
        o.status_code,
        s.is_delivered,
        o.purchased_at,
@@ -74,6 +74,7 @@ SELECT o.order_id,
 FROM core.orders o
 JOIN core.order_statuses s USING (status_code)
 JOIN core.customer_order_profiles p USING (customer_id)
+JOIN core.order_addresses a USING (order_id)
 LEFT JOIN items i USING (order_id)
 LEFT JOIN payments pay USING (order_id)
 LEFT JOIN reviews r USING (order_id);
@@ -87,7 +88,7 @@ SELECT i.order_id,
        i.order_item_id,
        i.product_id,
        i.seller_id,
-       pr.category_key,
+       h.category_key,
        i.price,
        i.freight_value,
        o.purchased_at,
@@ -96,7 +97,8 @@ SELECT i.order_id,
 FROM core.order_items i
 JOIN core.orders o USING (order_id)
 JOIN core.order_statuses s USING (status_code)
-JOIN core.products pr USING (product_id)
+JOIN core.product_category_history h ON h.product_id = i.product_id
+    AND h.version_no = i.category_version_no
 JOIN core.customer_order_profiles p USING (customer_id)
 WHERE s.is_delivered;
 

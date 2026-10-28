@@ -14,7 +14,8 @@ from provenance import hash_records, model_schema_fingerprint
 ROOT = Path(__file__).resolve().parent.parent
 PUBLISH_LOCK = 72620261028
 CORE_DELETE_ORDER = (
-    'order_reviews', 'order_payments', 'order_items', 'orders', 'products',
+    'order_reviews', 'order_payments', 'order_items', 'order_addresses', 'orders',
+    'product_category_history', 'products',
     'customer_order_profiles', 'customers', 'sellers', 'categories', 'order_statuses', 'calendar',
 )
 
@@ -55,12 +56,23 @@ def preserve_history(cur):
         ('order_items', 'n.order_id = old.order_id AND n.order_item_id::integer = old.order_item_id'),
         ('order_payments', 'n.order_id = old.order_id AND n.payment_sequential::integer = old.payment_sequential'),
         ('order_reviews', 'n.order_id = old.order_id AND n.review_id = old.review_id'),
+        ('products', 'n.product_id = old.product_id'),
     ):
         cur.execute(sql.SQL('SELECT count(*) FROM core.{} old WHERE NOT EXISTS '
                             '(SELECT 1 FROM {} n WHERE ' + condition + ')')
                     .format(sql.Identifier(table), sql.Identifier('stage_' + table)))
         if cur.fetchone()[0]:
             raise ValueError(f'{table}: снимок теряет ранее опубликованные ключи; нужен полный набор истории')
+    cur.execute('''SELECT count(*) FROM stage_order_items n JOIN core.order_items old
+                   ON n.order_id=old.order_id AND n.order_item_id::integer=old.order_item_id
+                   WHERE n.product_id IS DISTINCT FROM old.product_id''')
+    if cur.fetchone()[0]:
+        raise ValueError('order_items: существующая позиция не может сменить product_id')
+    cur.execute('''SELECT count(*) FROM stage_customers n
+                   JOIN core.customer_order_profiles old USING(customer_id)
+                   WHERE n.customer_unique_id IS DISTINCT FROM old.customer_unique_id''')
+    if cur.fetchone()[0]:
+        raise ValueError('customers: существующий customer_id не может сменить покупателя')
 
 
 def check_model(cur, statement):
@@ -68,6 +80,15 @@ def check_model(cur, statement):
 
 
 def replace_model(cur, load_sql, checks_sql):
+    # История и адреса сохраняются в снимке той же транзакции, без отдельного COMMIT.
+    for temporary, statement in (
+        ('prior_categories', 'SELECT category_key,name_pt,name_en FROM core.categories'),
+        ('prior_product_categories', 'SELECT * FROM core.product_category_history'),
+        ('prior_item_categories', 'SELECT order_id,order_item_id,product_id,category_version_no FROM core.order_items'),
+        ('prior_order_addresses', 'SELECT * FROM core.order_addresses'),
+    ):
+        cur.execute(sql.SQL('CREATE TEMP TABLE {} ON COMMIT DROP AS ' + statement)
+                    .format(sql.Identifier(temporary)))
     for table in CORE_DELETE_ORDER:
         cur.execute(sql.SQL('DELETE FROM core.{}').format(sql.Identifier(table)))
     # Выполняем тот же SQL, что в build; меняется только адрес входных таблиц.

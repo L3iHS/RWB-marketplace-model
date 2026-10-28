@@ -9,6 +9,8 @@ data/*.part
 __pycache__/
 *.pyc
 .venv/
+frontend/node_modules/
+frontend/dist/
 .env
 artifacts/runtime/
 

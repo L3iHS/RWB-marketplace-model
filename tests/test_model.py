@@ -15,6 +15,7 @@ import subprocess
 import sys
 import unittest
 import uuid
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
@@ -242,6 +243,33 @@ class EdgeCases(unittest.TestCase):
                 cur.executemany('UPDATE raw.order_items SET price = %s WHERE order_id = %s AND order_item_id = %s',
                                 [(price, order_id, item_id) for order_id, item_id, price in original])
             build(self.dbname)
+
+    def answer(self, name):
+        return self.query((ROOT / 'answers' / name).read_text(encoding='utf-8'))
+
+    def test_answer_price_history_breaks_ties_by_units(self):
+        # У каждого товара одна цена; p1 продан двумя единицами — он и выбирается.
+        self.assertEqual(self.answer('06_price_history.sql'),
+                         [('p1', date(2017, 1, 15), Decimal('10.00'), 2)])
+
+    def test_answer_status_funnel_counts_orders_without_items(self):
+        self.assertEqual(self.answer('08_status_funnel.sql'),
+                         [('delivered', 3, Decimal('75.00'), 0), ('canceled', 1, Decimal('25.00'), 0)])
+
+    def test_answer_installments_by_payment_type(self):
+        # Кредитная карта: 4, 1, 1 части → 2.00; ваучер: 1.
+        self.assertEqual(self.answer('09b_payments_by_type.sql'),
+                         [('credit_card', 3, Decimal('2.00')), ('voucher', 1, Decimal('1.00'))])
+
+    def test_answer_review_uses_latest_score_and_keeps_empty_scores(self):
+        # o1: отзывы 1 и 5, последний — 5; доставлен за 5 дней вовремя.
+        # o2: оценка 3; доставлен за 4 дня, на день позже обещанного.
+        self.assertEqual(self.answer('10_review_vs_delivery.sql'), [
+            (1, 0, None, None), (2, 0, None, None),
+            (3, 1, Decimal('4.00'), Decimal('100.00')),
+            (4, 0, None, None),
+            (5, 1, Decimal('5.00'), Decimal('0.00')),
+        ])
 
     def test_rebuild_does_not_change_source(self):
         before = fingerprint(self.dbname, 'raw')

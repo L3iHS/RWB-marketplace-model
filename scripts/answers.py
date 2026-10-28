@@ -1,4 +1,4 @@
-"""Публикует неизменяемый комплект ответов 1–5 и показывает его в терминале.
+"""Публикует неизменяемый комплект ответов 1–10 и показывает его в терминале.
 
 Запуск: docker compose run --rm app answers
 """
@@ -48,10 +48,20 @@ def show_answers(generation):
         print(pd.DataFrame(report[Path(name).stem], columns=columns).to_string(index=False))
 
 
+# Номера вопросов задания. Вопрос может состоять из нескольких файлов
+# (09a_…, 09b_…); 99_controls.sql — сверка, а не ответ.
+QUESTIONS = {f'{n:02d}' for n in range(1, 11)}
+
+
+def answer_files():
+    return sorted(p for p in (ROOT / 'answers').glob('[0-9][0-9]*_*.sql') if p.name[:2] in QUESTIONS)
+
+
 def export_answers(output):
-    queries = sorted((ROOT / 'answers').glob('0[1-5]_*.sql'))
-    if len(queries) != 5 or {p.name[:2] for p in queries} != {'01', '02', '03', '04', '05'}:
-        raise ValueError('Для полного комплекта нужны ровно пять SQL-ответов 01–05')
+    queries = answer_files()
+    missing = sorted(QUESTIONS - {p.name[:2] for p in queries})
+    if missing:
+        raise ValueError(f'Для полного комплекта нужны SQL-ответы на все вопросы 01–10; нет: {", ".join(missing)}')
     # SQL фиксируется до выполнения: правка файла во время запроса не подменит сохранённый текст.
     statements = [(p.name, p.read_text(encoding='utf-8')) for p in queries]
     output = Path(output)

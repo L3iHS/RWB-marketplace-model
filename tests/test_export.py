@@ -57,6 +57,11 @@ class ExportTests(unittest.TestCase):
         self.assertIn('27.33', output)
         self.assertIn('Опубликован полный комплект:', output)
 
+    def answer_files(self):
+        """Файлы ответов во временной копии: все вопросы 01–10, без 99_controls."""
+        with patch.object(exporter, 'ROOT', self.root):
+            return exporter.answer_files()
+
     def current(self):
         pointer = self.output / 'current.json'
         self.assertTrue(pointer.is_file(), 'Нет атомарного указателя на полный результат')
@@ -67,7 +72,7 @@ class ExportTests(unittest.TestCase):
         return current, generation, json.loads(manifest_path.read_text())
 
     def test_failed_query_does_not_replace_existing_files(self):
-        for p in (self.root / 'answers').glob('0[1-5]_*.sql'):
+        for p in self.answer_files():
             (self.output / (p.stem + '.csv')).write_text('previous result\n')
         (self.output / 'results.json').write_text('{"previous":true}')
         before = file_hashes(self.output)
@@ -80,7 +85,7 @@ class ExportTests(unittest.TestCase):
         self.export()
         _, generation, manifest = self.current()
         self.assertEqual(manifest['format_version'], 1)
-        self.assertEqual(len(manifest['queries']), 5)
+        self.assertEqual(sorted(manifest['queries']), [p.name for p in self.answer_files()])
         for name, info in manifest['files'].items():
             self.assertEqual(hashlib.sha256((generation / name).read_bytes()).hexdigest(), info['sha256'])
         self.assertEqual(set(manifest['context']), {'publication', 'raw', 'core', 'model_schema_sha256', 'workspace_model_sha256'})
@@ -145,10 +150,23 @@ class ExportTests(unittest.TestCase):
         self.assertFalse(list(self.output.glob('.pending-*')))
 
     def test_missing_answer_refuses_partial_export(self):
-        (self.root / 'answers/04_repeat_customers.sql').unlink()
-        with self.assertRaises(ValueError):
-            self.export()
-        self.assertEqual(list(self.output.iterdir()), [])
+        for name in ('04_repeat_customers.sql', '07_delivery_by_state.sql'):
+            with self.subTest(missing=name):
+                path = self.root / 'answers' / name
+                sql_text = path.read_text()
+                path.unlink()
+                try:
+                    with self.assertRaises(ValueError):
+                        self.export()
+                    self.assertEqual(list(self.output.iterdir()), [])
+                finally:
+                    path.write_text(sql_text)
+
+    def test_all_questions_exported(self):
+        output = self.export()
+        _, _, manifest = self.current()
+        self.assertEqual({name[:2] for name in manifest['queries']}, exporter.QUESTIONS)
+        self.assertIn('Вопрос 10. Связь оценки покупателя со сроком доставки.', output)
 
     def test_workspace_sql_is_not_claimed_as_applied_model_revision(self):
         self.export()

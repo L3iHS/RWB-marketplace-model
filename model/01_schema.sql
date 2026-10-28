@@ -60,6 +60,19 @@ CREATE TABLE core.products (
     width_cm           integer
 );
 
+-- Наблюдаемая история категории. Источник не содержит времени бизнес-изменения:
+-- observed_from/to — время приёма, а не придуманная дата переклассификации.
+CREATE TABLE core.product_category_history (
+    product_id text NOT NULL REFERENCES core.products,
+    version_no integer NOT NULL CHECK (version_no > 0),
+    category_key text NOT NULL REFERENCES core.categories,
+    observed_from timestamptz NOT NULL,
+    observed_to timestamptz,
+    PRIMARY KEY (product_id, version_no),
+    CHECK (observed_to IS NULL OR observed_to > observed_from)
+);
+CREATE UNIQUE INDEX ON core.product_category_history(product_id) WHERE observed_to IS NULL;
+
 -- Продавец. Одна строка = один seller_id.
 CREATE TABLE core.sellers (
     seller_id       text PRIMARY KEY,
@@ -84,12 +97,23 @@ CREATE TABLE core.orders (
     loaded_at             timestamptz NOT NULL
 );
 
+-- Адрес фиксируется при первом наблюдении заказа и не зависит от переезда
+-- покупателя или последующего изменения адресного профиля источником.
+CREATE TABLE core.order_addresses (
+    order_id text PRIMARY KEY REFERENCES core.orders,
+    zip_code_prefix text,
+    city text,
+    state text,
+    observed_at timestamptz NOT NULL
+);
+
 -- Позиция заказа. Одна строка = одна единица товара:
 -- три одинаковых товара в заказе — это три строки (order_item_id 1, 2, 3).
 CREATE TABLE core.order_items (
     order_id          text NOT NULL REFERENCES core.orders,
     order_item_id     integer NOT NULL CHECK (order_item_id > 0),
     product_id        text NOT NULL REFERENCES core.products,
+    category_version_no integer NOT NULL,
     seller_id         text NOT NULL REFERENCES core.sellers,
     shipping_limit_at timestamp,
     -- Верхняя граница исключает Infinity и NaN, которые PostgreSQL считает больше конечных чисел.
@@ -97,7 +121,9 @@ CREATE TABLE core.order_items (
     freight_value     numeric NOT NULL CHECK (freight_value >= 0 AND freight_value < 'Infinity'::numeric),
     source_file       text,
     loaded_at         timestamptz NOT NULL,
-    PRIMARY KEY (order_id, order_item_id)
+    PRIMARY KEY (order_id, order_item_id),
+    FOREIGN KEY (product_id, category_version_no)
+        REFERENCES core.product_category_history(product_id, version_no)
 );
 
 -- Платёж. Одна строка = одна платёжная запись заказа.

@@ -662,5 +662,840 @@
       "revenue": "283.29",
       "revenue_pct": "0.00"
     }
+  ],
+  "06_price_history": [
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-19",
+      "price": "44.98",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-20",
+      "price": "45.36",
+      "units_sold": 4
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-21",
+      "price": "45.83",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-21",
+      "price": "46.33",
+      "units_sold": 4
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-21",
+      "price": "47.21",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-22",
+      "price": "47.61",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-22",
+      "price": "47.91",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-24",
+      "price": "49.83",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-24",
+      "price": "50.21",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-25",
+      "price": "50.70",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-26",
+      "price": "52.30",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-02-27",
+      "price": "49.90",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-01",
+      "price": "49.90",
+      "units_sold": 4
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-02",
+      "price": "49.90",
+      "units_sold": 5
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-04",
+      "price": "49.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-06",
+      "price": "49.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-07",
+      "price": "49.89",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-07",
+      "price": "49.90",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-08",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-09",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-10",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-11",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-13",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-16",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-17",
+      "price": "47.65",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-19",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-19",
+      "price": "59.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-20",
+      "price": "47.65",
+      "units_sold": 11
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-21",
+      "price": "47.65",
+      "units_sold": 10
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-22",
+      "price": "47.65",
+      "units_sold": 7
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-23",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-25",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-26",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-03-29",
+      "price": "47.65",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-11",
+      "price": "59.90",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-13",
+      "price": "53.99",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-15",
+      "price": "53.99",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-16",
+      "price": "53.99",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-17",
+      "price": "53.69",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-20",
+      "price": "53.50",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-22",
+      "price": "53.50",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-23",
+      "price": "53.49",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-27",
+      "price": "52.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-28",
+      "price": "52.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-29",
+      "price": "52.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-04-30",
+      "price": "49.99",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-01",
+      "price": "49.99",
+      "units_sold": 4
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-02",
+      "price": "49.99",
+      "units_sold": 6
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-03",
+      "price": "49.99",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-05",
+      "price": "48.90",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-07",
+      "price": "53.90",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-08",
+      "price": "53.88",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-10",
+      "price": "53.79",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-14",
+      "price": "53.79",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-15",
+      "price": "53.79",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-16",
+      "price": "53.79",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-20",
+      "price": "53.69",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-21",
+      "price": "53.69",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-05-23",
+      "price": "53.69",
+      "units_sold": 3
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-06-11",
+      "price": "49.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-06-13",
+      "price": "49.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-06-15",
+      "price": "49.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-06-20",
+      "price": "49.98",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-06-25",
+      "price": "49.98",
+      "units_sold": 4
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-07-09",
+      "price": "51.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-07-12",
+      "price": "51.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-07-17",
+      "price": "52.90",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-07-26",
+      "price": "51.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-07-30",
+      "price": "48.99",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-03",
+      "price": "50.75",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-05",
+      "price": "51.89",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-06",
+      "price": "50.75",
+      "units_sold": 1
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-07",
+      "price": "50.75",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-09",
+      "price": "49.98",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-16",
+      "price": "50.75",
+      "units_sold": 2
+    },
+    {
+      "product_id": "437c05a395e9e47f9762e677a7068ce7",
+      "date": "2018-08-17",
+      "price": "50.75",
+      "units_sold": 2
+    }
+  ],
+  "07_delivery_by_state": [
+    {
+      "state": "SP",
+      "orders": 40494,
+      "avg_delivery_days": "8.70",
+      "late_pct": "4.49"
+    },
+    {
+      "state": "RJ",
+      "orders": 12350,
+      "avg_delivery_days": "15.24",
+      "late_pct": "12.11"
+    },
+    {
+      "state": "MG",
+      "orders": 11354,
+      "avg_delivery_days": "11.94",
+      "late_pct": "4.57"
+    },
+    {
+      "state": "RS",
+      "orders": 5344,
+      "avg_delivery_days": "15.25",
+      "late_pct": "6.08"
+    },
+    {
+      "state": "PR",
+      "orders": 4923,
+      "avg_delivery_days": "11.94",
+      "late_pct": "4.04"
+    },
+    {
+      "state": "SC",
+      "orders": 3546,
+      "avg_delivery_days": "14.90",
+      "late_pct": "8.21"
+    },
+    {
+      "state": "BA",
+      "orders": 3256,
+      "avg_delivery_days": "19.28",
+      "late_pct": "12.16"
+    },
+    {
+      "state": "DF",
+      "orders": 2080,
+      "avg_delivery_days": "12.90",
+      "late_pct": "5.67"
+    },
+    {
+      "state": "ES",
+      "orders": 1995,
+      "avg_delivery_days": "15.72",
+      "late_pct": "10.73"
+    },
+    {
+      "state": "GO",
+      "orders": 1957,
+      "avg_delivery_days": "15.54",
+      "late_pct": "6.54"
+    },
+    {
+      "state": "PE",
+      "orders": 1593,
+      "avg_delivery_days": "18.40",
+      "late_pct": "9.60"
+    },
+    {
+      "state": "CE",
+      "orders": 1279,
+      "avg_delivery_days": "21.20",
+      "late_pct": "13.76"
+    },
+    {
+      "state": "PA",
+      "orders": 946,
+      "avg_delivery_days": "23.73",
+      "late_pct": "11.21"
+    },
+    {
+      "state": "MT",
+      "orders": 886,
+      "avg_delivery_days": "18.00",
+      "late_pct": "5.98"
+    },
+    {
+      "state": "MA",
+      "orders": 717,
+      "avg_delivery_days": "21.51",
+      "late_pct": "17.43"
+    },
+    {
+      "state": "MS",
+      "orders": 701,
+      "avg_delivery_days": "15.54",
+      "late_pct": "9.70"
+    },
+    {
+      "state": "PB",
+      "orders": 517,
+      "avg_delivery_days": "20.39",
+      "late_pct": "10.44"
+    }
+  ],
+  "08_status_funnel": [
+    {
+      "status": "delivered",
+      "orders": 96478,
+      "orders_pct": "97.02",
+      "orders_without_items": 0
+    },
+    {
+      "status": "shipped",
+      "orders": 1107,
+      "orders_pct": "1.11",
+      "orders_without_items": 1
+    },
+    {
+      "status": "canceled",
+      "orders": 625,
+      "orders_pct": "0.63",
+      "orders_without_items": 164
+    },
+    {
+      "status": "unavailable",
+      "orders": 609,
+      "orders_pct": "0.61",
+      "orders_without_items": 603
+    },
+    {
+      "status": "invoiced",
+      "orders": 314,
+      "orders_pct": "0.32",
+      "orders_without_items": 2
+    },
+    {
+      "status": "processing",
+      "orders": 301,
+      "orders_pct": "0.30",
+      "orders_without_items": 0
+    },
+    {
+      "status": "created",
+      "orders": 5,
+      "orders_pct": "0.01",
+      "orders_without_items": 5
+    },
+    {
+      "status": "approved",
+      "orders": 2,
+      "orders_pct": "0.00",
+      "orders_without_items": 0
+    }
+  ],
+  "09a_payments_by_state": [
+    {
+      "state": "SP",
+      "payments": 24669,
+      "amount": "3419478.51",
+      "avg_installments": "2.51"
+    },
+    {
+      "state": "RJ",
+      "payments": 6891,
+      "amount": "1075017.63",
+      "avg_installments": "2.81"
+    },
+    {
+      "state": "MG",
+      "payments": 6385,
+      "amount": "1011722.65",
+      "avg_installments": "2.88"
+    },
+    {
+      "state": "RS",
+      "payments": 2874,
+      "amount": "461414.54",
+      "avg_installments": "2.85"
+    },
+    {
+      "state": "PR",
+      "payments": 2868,
+      "amount": "454774.16",
+      "avg_installments": "2.76"
+    },
+    {
+      "state": "SC",
+      "payments": 1962,
+      "amount": "342903.73",
+      "avg_installments": "2.82"
+    },
+    {
+      "state": "BA",
+      "payments": 1896,
+      "amount": "331326.10",
+      "avg_installments": "3.01"
+    },
+    {
+      "state": "DF",
+      "payments": 1244,
+      "amount": "196851.14",
+      "avg_installments": "2.59"
+    },
+    {
+      "state": "GO",
+      "payments": 1103,
+      "amount": "184863.90",
+      "avg_installments": "2.90"
+    },
+    {
+      "state": "ES",
+      "payments": 1093,
+      "amount": "181783.48",
+      "avg_installments": "2.83"
+    },
+    {
+      "state": "PE",
+      "payments": 904,
+      "amount": "169880.06",
+      "avg_installments": "3.46"
+    },
+    {
+      "state": "CE",
+      "payments": 702,
+      "amount": "139854.11",
+      "avg_installments": "3.37"
+    },
+    {
+      "state": "MT",
+      "payments": 496,
+      "amount": "95208.89",
+      "avg_installments": "2.97"
+    },
+    {
+      "state": "PA",
+      "payments": 481,
+      "amount": "106809.30",
+      "avg_installments": "3.13"
+    },
+    {
+      "state": "MS",
+      "payments": 428,
+      "amount": "75279.66",
+      "avg_installments": "2.71"
+    },
+    {
+      "state": "MA",
+      "payments": 368,
+      "amount": "75053.61",
+      "avg_installments": "2.85"
+    },
+    {
+      "state": "PB",
+      "payments": 294,
+      "amount": "78124.68",
+      "avg_installments": "3.62"
+    },
+    {
+      "state": "PI",
+      "payments": 281,
+      "amount": "63184.61",
+      "avg_installments": "3.36"
+    },
+    {
+      "state": "RN",
+      "payments": 263,
+      "amount": "57185.92",
+      "avg_installments": "3.62"
+    },
+    {
+      "state": "AL",
+      "payments": 208,
+      "amount": "44537.49",
+      "avg_installments": "3.23"
+    },
+    {
+      "state": "TO",
+      "payments": 162,
+      "amount": "32657.39",
+      "avg_installments": "2.74"
+    },
+    {
+      "state": "SE",
+      "payments": 159,
+      "amount": "34066.53",
+      "avg_installments": "3.54"
+    },
+    {
+      "state": "RO",
+      "payments": 115,
+      "amount": "29382.48",
+      "avg_installments": "3.11"
+    },
+    {
+      "state": "AM",
+      "payments": 75,
+      "amount": "14935.32",
+      "avg_installments": "2.84"
+    },
+    {
+      "state": "AP",
+      "payments": 40,
+      "amount": "8931.27",
+      "avg_installments": "2.70"
+    },
+    {
+      "state": "AC",
+      "payments": 28,
+      "amount": "6683.10",
+      "avg_installments": "3.04"
+    },
+    {
+      "state": "RR",
+      "payments": 26,
+      "amount": "7852.79",
+      "avg_installments": "3.12"
+    }
+  ],
+  "09b_payments_by_type": [
+    {
+      "payment_type": "credit_card",
+      "payments": 76795,
+      "avg_installments": "3.51"
+    },
+    {
+      "payment_type": "boleto",
+      "payments": 19784,
+      "avg_installments": "1.00"
+    },
+    {
+      "payment_type": "voucher",
+      "payments": 5775,
+      "avg_installments": "1.00"
+    },
+    {
+      "payment_type": "debit_card",
+      "payments": 1529,
+      "avg_installments": "1.00"
+    },
+    {
+      "payment_type": "not_defined",
+      "payments": 3,
+      "avg_installments": "1.00"
+    }
+  ],
+  "10_review_vs_delivery": [
+    {
+      "score": 1,
+      "orders": 9351,
+      "avg_delivery_days": "21.26",
+      "late_pct": "36.69"
+    },
+    {
+      "score": 2,
+      "orders": 2921,
+      "avg_delivery_days": "16.59",
+      "late_pct": "18.90"
+    },
+    {
+      "score": 3,
+      "orders": 7916,
+      "avg_delivery_days": "14.20",
+      "late_pct": "8.77"
+    },
+    {
+      "score": 4,
+      "orders": 18888,
+      "avg_delivery_days": "12.25",
+      "late_pct": "3.44"
+    },
+    {
+      "score": 5,
+      "orders": 56748,
+      "avg_delivery_days": "10.62",
+      "late_pct": "1.86"
+    }
   ]
 }
