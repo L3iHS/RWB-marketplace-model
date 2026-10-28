@@ -202,6 +202,47 @@ class EdgeCases(unittest.TestCase):
             self.query("SELECT payment_records, paid_amount, payment_delta FROM mart.order_totals WHERE order_id = 'o4'"),
             [(0, None, None)])
 
+    def test_nonfinite_money_is_rejected_without_changing_model(self):
+        fields = [
+            ('order_items', 'price', "order_id = 'o1' AND order_item_id = '1'"),
+            ('order_items', 'freight_value', "order_id = 'o1' AND order_item_id = '1'"),
+            ('order_payments', 'payment_value', "order_id = 'o1' AND payment_sequential = '1'"),
+        ]
+        for table, field, condition in fields:
+            for value in ('NaN', 'Infinity', '-Infinity'):
+                with self.subTest(table=table, field=field, value=value):
+                    before = fingerprint(self.dbname, 'core')
+                    with connect(self.dbname) as conn, conn.cursor() as cur:
+                        cur.execute(f'SELECT {field} FROM raw.{table} WHERE {condition}')
+                        original = cur.fetchone()[0]
+                        cur.execute(f'UPDATE raw.{table} SET {field} = %s WHERE {condition}', (value,))
+                    dirty_raw = fingerprint(self.dbname, 'raw')
+                    try:
+                        result = build(self.dbname, success=False)
+                        self.assertNotEqual(result.returncode, 0, 'Недопустимая денежная величина принята')
+                        self.assertEqual(before, fingerprint(self.dbname, 'core'))
+                        self.assertEqual(dirty_raw, fingerprint(self.dbname, 'raw'))
+                    finally:
+                        with connect(self.dbname) as conn, conn.cursor() as cur:
+                            cur.execute(f'UPDATE raw.{table} SET {field} = %s WHERE {condition}', (original,))
+                        build(self.dbname)
+
+    def test_zero_revenue_keeps_categories_with_undefined_shares(self):
+        original = self.query('SELECT order_id, order_item_id, price FROM raw.order_items')
+        try:
+            with connect(self.dbname) as conn, conn.cursor() as cur:
+                cur.execute("UPDATE raw.order_items SET price = '0'")
+            build(self.dbname)
+            self.assertEqual(
+                self.query('SELECT category_key, revenue, revenue_pct FROM mart.category_sales ORDER BY category_key'),
+                [('__unknown__', Decimal('0'), None), ('known', Decimal('0'), None),
+                 ('untranslated', Decimal('0'), None)])
+        finally:
+            with connect(self.dbname) as conn, conn.cursor() as cur:
+                cur.executemany('UPDATE raw.order_items SET price = %s WHERE order_id = %s AND order_item_id = %s',
+                                [(price, order_id, item_id) for order_id, item_id, price in original])
+            build(self.dbname)
+
     def test_rebuild_does_not_change_source(self):
         before = fingerprint(self.dbname, 'raw')
         build(self.dbname)

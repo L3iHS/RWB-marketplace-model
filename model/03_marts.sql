@@ -147,7 +147,8 @@ SELECT c.category_key,
        c.name_pt,
        c.is_unknown,
        t.revenue,
-       100 * t.revenue / sum(t.revenue) OVER () AS revenue_pct
+       -- При нулевом обороте доля не определена; категория сохраняется, доля — NULL.
+       100 * t.revenue / nullif(sum(t.revenue) OVER (), 0) AS revenue_pct
 FROM totals t
 JOIN core.categories c USING (category_key);
 

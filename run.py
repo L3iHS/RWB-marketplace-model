@@ -6,7 +6,7 @@
     docker compose run --rm app build      сборка core и mart с проверками
     docker compose run --rm app check      сверка с контрольными цифрами
     docker compose run --rm app test       тесты
-    docker compose run --rm app answers    ответы 1–5 на экран и в artifacts/answers/
+    docker compose run --rm app answers    ответы на экран и комплект в artifacts/runtime/answers/
     docker compose run --rm app preview    первые строки таблиц
     docker compose run --rm app explore    разведка raw
     docker compose run --rm app sql FILE   выполнить любые SQL-файлы
@@ -20,17 +20,20 @@ docker-compose.yml, без Docker действуют значения по ум�
 """
 
 import argparse
+import hashlib
 import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / 'data'
-DATA_URL = 'https://raw.githubusercontent.com/olist/work-at-olist-data/master/datasets/'
+DATA_REVISION = 'd9e49802f3e92d09ee94ab9ccc5e457f207a8959'
+DATA_URL = f'https://raw.githubusercontent.com/olist/work-at-olist-data/{DATA_REVISION}/datasets/'
 DATA_FILES = [
     'olist_orders_dataset.csv',
     'olist_order_items_dataset.csv',
@@ -41,6 +44,17 @@ DATA_FILES = [
     'olist_customers_dataset.csv',
     'product_category_name_translation.csv',
 ]
+# SHA-256 исходной выгрузки: непустой, но оборванный или другой CSV не считается готовым.
+DATA_SHA256 = {
+    'olist_orders_dataset.csv': '8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf',
+    'olist_order_items_dataset.csv': '4f6abdbbc94036d0df4a76fa0520c072e31a40119d70f7f370fba1e2285d2bcb',
+    'olist_order_payments_dataset.csv': '61674868ed7b872aac3dcd95bf774448a88f6426b183f21be55f75af021ffdec',
+    'olist_order_reviews_dataset.csv': '012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7',
+    'olist_products_dataset.csv': '3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc',
+    'olist_sellers_dataset.csv': '31eb9bd50d684526a78f2389413ce61841e97692de7b828fe7d956b534586312',
+    'olist_customers_dataset.csv': 'c26c17f59f3027a6a0dbeb8f1fa373c38f3323ecc84f225a8f4820e5bb288df8',
+    'product_category_name_translation.csv': 'a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278',
+}
 
 # Настройки, которые действуют на всю транзакцию сборки.
 SESSION_SETTINGS = [
@@ -108,18 +122,38 @@ def build():
     return sql([p.relative_to(ROOT).as_posix() for p in sorted((ROOT / 'model').glob('*.sql'))])
 
 
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with path.open('rb') as source:
+        for block in iter(lambda: source.read(1024 * 1024), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
 def download_data():
-    """Скачивает недостающие CSV Olist в data/."""
-    DATA_DIR.mkdir(exist_ok=True)
+    """Принимает только проверенные оригиналы; сбой не публикует временный файл."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     for name in DATA_FILES:
         target = DATA_DIR / name
-        if target.exists() and target.stat().st_size > 0:
+        expected = DATA_SHA256[name]
+        if target.is_file() and file_sha256(target) == expected:
             continue
         print(f'  качаю {name}', flush=True)
-        tmp = target.with_suffix('.part')
-        urllib.request.urlretrieve(DATA_URL + name, tmp)
-        tmp.replace(target)
-    print(f'  данные на месте: {len(DATA_FILES)} файлов в data/')
+        descriptor, filename = tempfile.mkstemp(prefix=f'.{name}.', suffix='.part', dir=DATA_DIR)
+        tmp = Path(filename)
+        try:
+            with os.fdopen(descriptor, 'wb') as destination:
+                with urllib.request.urlopen(DATA_URL + name, timeout=60) as response:
+                    shutil.copyfileobj(response, destination)
+                destination.flush()
+                os.fsync(destination.fileno())
+            actual = file_sha256(tmp)
+            if actual != expected:
+                raise ValueError(f'{name}: SHA-256 не совпал; файл не принят ({actual})')
+            os.replace(tmp, target)
+        finally:
+            tmp.unlink(missing_ok=True)
+    print(f'  проверены SHA-256: {len(DATA_FILES)} файлов в data/')
 
 
 def wait_for_db(timeout=60):
@@ -181,7 +215,8 @@ def main():
     commands.add_parser('build', help='собрать core и mart с нуля (26 проверок внутри)')
     commands.add_parser('check', help='сверить ответы с контрольными цифрами задания')
     commands.add_parser('test', help='запустить тесты')
-    commands.add_parser('answers', help='показать ответы 1–5 и сохранить их в artifacts/answers/')
+    answers_cmd = commands.add_parser('answers', help='показать ответы 1–5 и опубликовать полный комплект')
+    answers_cmd.add_argument('--output-dir', help='каталог результатов (по умолчанию artifacts/runtime/answers/)')
     commands.add_parser('preview', help='первые строки таблиц; параметры как у scripts/preview.py: -n 10 -t orders')
     commands.add_parser('explore', help='разведка raw')
     commands.add_parser('profile', help='профиль raw в artifacts/profile.json')
@@ -202,7 +237,8 @@ def main():
     elif args.command == 'test':
         code = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v'], cwd=ROOT).returncode
     elif args.command == 'answers':
-        code = python_script('answers.py')
+        options = ['--output-dir', args.output_dir] if args.output_dir else []
+        code = python_script('answers.py', *options)
     elif args.command == 'preview':
         code = python_script('preview.py', *extra)
     elif args.command == 'explore':

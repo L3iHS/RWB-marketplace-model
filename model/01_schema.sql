@@ -92,8 +92,9 @@ CREATE TABLE core.order_items (
     product_id        text NOT NULL REFERENCES core.products,
     seller_id         text NOT NULL REFERENCES core.sellers,
     shipping_limit_at timestamp,
-    price             numeric NOT NULL CHECK (price >= 0),
-    freight_value     numeric NOT NULL CHECK (freight_value >= 0),
+    -- Верхняя граница исключает Infinity и NaN, которые PostgreSQL считает больше конечных чисел.
+    price             numeric NOT NULL CHECK (price >= 0 AND price < 'Infinity'::numeric),
+    freight_value     numeric NOT NULL CHECK (freight_value >= 0 AND freight_value < 'Infinity'::numeric),
     source_file       text,
     loaded_at         timestamptz NOT NULL,
     PRIMARY KEY (order_id, order_item_id)
@@ -108,7 +109,7 @@ CREATE TABLE core.order_payments (
     payment_sequential integer NOT NULL CHECK (payment_sequential > 0),
     payment_type       text NOT NULL,
     installments       integer NOT NULL CHECK (installments >= 0),
-    payment_value      numeric NOT NULL CHECK (payment_value >= 0),
+    payment_value      numeric NOT NULL CHECK (payment_value >= 0 AND payment_value < 'Infinity'::numeric),
     source_file        text,
     loaded_at          timestamptz NOT NULL,
     PRIMARY KEY (order_id, payment_sequential)

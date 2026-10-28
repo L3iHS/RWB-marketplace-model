@@ -1,5 +1,6 @@
 #   bash scripts/download_data.sh
 data/*.csv
+data/*.part
 
 # Мусор macOS
 .DS_Store
