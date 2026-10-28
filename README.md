@@ -50,7 +50,7 @@ docker compose run --rm app test     # 16 тестов
 | `build` | Собирает `core` и `mart` с нуля одной транзакцией; при ошибке остаётся прежняя модель |
 | `check` | Сверяет ответы с контрольными цифрами задания |
 | `test` | Тесты: настоящая выгрузка + искусственные крайние случаи во временной базе |
-| `answers` | Ответы 1–5 в `artifacts/answers/` (CSV и JSON) |
+| `answers` | Показывает ответы 1–5 и сохраняет их в `artifacts/answers/` (CSV и JSON) |
 | `preview` | Первые строки каждой таблицы `core` и `mart` в виде pandas; `preview -n 10 -t orders` |
 | `explore` | Разведка `raw`: ключи, пропуски, связи, деньги |
 | `profile` | Профиль `raw` в `artifacts/profile.json` |

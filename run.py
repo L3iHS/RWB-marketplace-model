@@ -6,7 +6,7 @@
     docker compose run --rm app build      сборка core и mart с проверками
     docker compose run --rm app check      сверка с контрольными цифрами
     docker compose run --rm app test       тесты
-    docker compose run --rm app answers    ответы в artifacts/answers/
+    docker compose run --rm app answers    ответы 1–5 на экран и в artifacts/answers/
     docker compose run --rm app preview    первые строки таблиц
     docker compose run --rm app explore    разведка raw
     docker compose run --rm app sql FILE   выполнить любые SQL-файлы
@@ -181,7 +181,7 @@ def main():
     commands.add_parser('build', help='собрать core и mart с нуля (26 проверок внутри)')
     commands.add_parser('check', help='сверить ответы с контрольными цифрами задания')
     commands.add_parser('test', help='запустить тесты')
-    commands.add_parser('answers', help='выгрузить ответы 1–5 в artifacts/answers/')
+    commands.add_parser('answers', help='показать ответы 1–5 и сохранить их в artifacts/answers/')
     commands.add_parser('preview', help='первые строки таблиц; параметры как у scripts/preview.py: -n 10 -t orders')
     commands.add_parser('explore', help='разведка raw')
     commands.add_parser('profile', help='профиль raw в artifacts/profile.json')
