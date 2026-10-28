@@ -83,7 +83,8 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(len(manifest['queries']), 5)
         for name, info in manifest['files'].items():
             self.assertEqual(hashlib.sha256((generation / name).read_bytes()).hexdigest(), info['sha256'])
-        self.assertEqual(set(manifest['context']), {'raw', 'core', 'model_schema_sha256', 'workspace_model_sha256'})
+        self.assertEqual(set(manifest['context']), {'publication', 'raw', 'core', 'model_schema_sha256', 'workspace_model_sha256'})
+        self.assertIsNone(manifest['context']['publication'])
         for schema in ('raw', 'core'):
             self.assertEqual(len(manifest['context'][schema]['sha256']), 64)
             self.assertTrue(manifest['context'][schema]['tables'])

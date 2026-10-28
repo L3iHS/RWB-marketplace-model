@@ -73,7 +73,18 @@ def collect_context(conn, root):
     model_files = sorted((Path(root) / 'model').glob('*.sql'))
     if not model_files:
         raise ValueError('Нет SQL-файлов модели для описания происхождения')
+    with conn.cursor() as cur:
+        cur.execute("SELECT to_regclass('ops.current_dataset')")
+        publication = None
+        if cur.fetchone()[0] is not None:
+            cur.execute('''SELECT v.version_id, v.dataset_sha256, v.transform_sha256,
+                                  v.source_id, v.sequence, v.kind, v.published_at
+                           FROM ops.current_dataset c JOIN ops.dataset_versions v USING(version_id)''')
+            row = cur.fetchone()
+            if row:
+                publication = dict(zip([c.name for c in cur.description], row))
     return {
+        'publication': publication,
         'raw': schema_fingerprint(conn, 'raw'),
         'core': schema_fingerprint(conn, 'core'),
         'model_schema_sha256': model_schema_fingerprint(conn),

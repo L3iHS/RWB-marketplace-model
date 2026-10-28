@@ -183,6 +183,8 @@ def main():
     started = time.time()
 
     with conn, conn.cursor() as cur:
+        # Не пересекать первичную подготовку с публикацией нового снимка.
+        cur.execute('SELECT pg_advisory_xact_lock(72620261028)')
         if not args.skip_ddl:
             # Схемы создаём здесь, а не полагаемся на init-скрипты Docker:
             # если папка init не смонтировалась, Postgres их не выполнит,

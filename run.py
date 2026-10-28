@@ -10,6 +10,9 @@
     docker compose run --rm app preview    первые строки таблиц
     docker compose run --rm app explore    разведка raw
     docker compose run --rm app sql FILE   выполнить любые SQL-файлы
+    docker compose run --rm app simulate   синтетические полные снимки
+    docker compose run --rm app ingest DIR принять новый полный снимок
+    docker compose run --rm app schedule --once  обработать один готовый пакет
 
 Можно запускать и без Docker (python run.py build), если на машине есть
 Python с пакетами из requirements.txt и psql, а база доступна по PGHOST/PGPORT.
@@ -21,6 +24,8 @@ docker-compose.yml, без Docker действуют значения по ум�
 
 import argparse
 import hashlib
+import json
+import math
 import os
 import shutil
 import subprocess
@@ -201,6 +206,30 @@ def setup(reload_raw):
                          '--user', p['user'], '--password', p['password'])
 
 
+def demo_init(database):
+    """Создаёт только новую демонстрационную БД; существующая не перезаписывается."""
+    import psycopg2
+    from psycopg2 import sql as pgsql
+    if not database.startswith('marketplace_demo'):
+        raise ValueError('Имя демонстрационной БД должно начинаться с marketplace_demo')
+    p = conn_params()
+    admin = psycopg2.connect(host=p['host'], port=p['port'], dbname='postgres',
+                             user=p['user'], password=p['password'])
+    try:
+        admin.autocommit = True
+        with admin.cursor() as cur:
+            cur.execute(pgsql.SQL('CREATE DATABASE {}').format(pgsql.Identifier(database)))
+    finally:
+        admin.close()
+    env = dict(os.environ, PGDATABASE=database)
+    for command in ('setup', 'build'):
+        result = subprocess.run([sys.executable, str(ROOT / 'run.py'), command], cwd=ROOT, env=env)
+        if result.returncode:
+            return result.returncode
+    print(f'Демонстрационная БД готова: {database}. Исходная marketplace не изменена.')
+    return 0
+
+
 def main():
     # Кириллица в выводе: на Windows консоль по умолчанию не в UTF-8.
     for stream in (sys.stdout, sys.stderr):
@@ -222,6 +251,28 @@ def main():
     commands.add_parser('profile', help='профиль raw в artifacts/profile.json')
     sql_cmd = commands.add_parser('sql', help='выполнить SQL-файлы одной транзакцией')
     sql_cmd.add_argument('files', nargs='+', help='пути от корня репозитория, например answers/02_top_sellers.sql')
+    demo_cmd = commands.add_parser('demo-init', help='создать отдельную новую БД с исходной моделью')
+    demo_cmd.add_argument('--database', default='marketplace_demo')
+    simulate_cmd = commands.add_parser('simulate', help='подготовить серию полных снимков с синтетическими операциями')
+    simulate_cmd.add_argument('--source-dir', type=Path, default=DATA_DIR)
+    simulate_cmd.add_argument('--output-dir', type=Path, default=ROOT / 'artifacts/runtime/incoming')
+    simulate_cmd.add_argument('--days', type=int, default=5)
+    simulate_cmd.add_argument('--orders-per-day', type=int, default=20)
+    simulate_cmd.add_argument('--seed', type=int, default=42)
+    seal_cmd = commands.add_parser('batch-manifest', help='проверить восемь CSV и опубликовать manifest готового снимка')
+    seal_cmd.add_argument('directory', type=Path)
+    seal_cmd.add_argument('--source-id', required=True)
+    seal_cmd.add_argument('--sequence', type=int, required=True)
+    ingest_cmd = commands.add_parser('ingest', help='принять готовый полный снимок и атомарно обновить модель')
+    ingest_cmd.add_argument('directory', type=Path)
+    ingest_cmd.add_argument('--archive-root', type=Path, default=ROOT / 'artifacts/runtime/ingestion')
+    schedule_cmd = commands.add_parser('schedule', help='необязательный опрос каталога: один пакет за цикл')
+    schedule_cmd.add_argument('--incoming', type=Path, default=ROOT / 'artifacts/runtime/incoming')
+    schedule_cmd.add_argument('--archive-root', type=Path, default=ROOT / 'artifacts/runtime/ingestion')
+    schedule_cmd.add_argument('--interval-seconds', type=float, default=86400)
+    schedule_cmd.add_argument('--max-runs', type=int)
+    schedule_cmd.add_argument('--once', action='store_true', help='обработать один пакет и завершиться')
+    commands.add_parser('ingestion-status', help='текущая публикация и последние попытки загрузки, JSON')
     # Неизвестные параметры передаём в preview.py (-n, -t, -s, --colwidth),
     # для остальных команд они — ошибка.
     args, extra = parser.parse_known_args()
@@ -247,6 +298,34 @@ def main():
         code = python_script('profile.py')
     elif args.command == 'sql':
         code = sql(args.files)
+    elif args.command == 'demo-init':
+        code = demo_init(args.database)
+    elif args.command in {'simulate', 'batch-manifest', 'ingest', 'schedule', 'ingestion-status'}:
+        sys.path.insert(0, str(ROOT / 'scripts'))
+        if args.command == 'simulate':
+            from simulate import generate
+            result = generate(args.source_dir, args.output_dir, args.days, args.orders_per_day, args.seed)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            code = 0
+        elif args.command == 'batch-manifest':
+            from batches import seal_batch
+            print(json.dumps(seal_batch(args.directory, args.source_id, args.sequence), ensure_ascii=False, indent=2))
+            code = 0
+        elif args.command == 'ingest':
+            from ingestion import ingest
+            result = ingest(args.directory, args.archive_root)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            code = 0 if result['status'] in {'published', 'skipped'} else 1
+        elif args.command == 'schedule':
+            from scheduler import serve
+            if not math.isfinite(args.interval_seconds):
+                parser.error('интервал должен быть конечным числом')
+            code = serve(args.incoming, args.archive_root, args.interval_seconds,
+                         1 if args.once else args.max_runs)
+        else:
+            from ingestion import status
+            print(json.dumps(status(), ensure_ascii=False, indent=2, default=str))
+            code = 0
     else:
         parser.print_help()
         code = 0

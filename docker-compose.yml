@@ -39,8 +39,28 @@ services:
       PGPORT: "5432"
       PGUSER: hack
       PGPASSWORD: hack
+      PGDATABASE: "${PGDATABASE:-marketplace}"
     volumes:
       - .:/app
+
+  # Не запускается без явного --profile ingestion. Первый цикл сразу,
+  # следующие — с заданным интервалом; остановка: docker compose stop scheduler.
+  scheduler:
+    profiles: ["ingestion"]
+    build: .
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: hack
+      PGPASSWORD: hack
+      PGDATABASE: "${PGDATABASE:-marketplace_demo}"
+    volumes:
+      - .:/app
+    command: ["schedule", "--interval-seconds", "${INGEST_INTERVAL_SECONDS:-86400}"]
 
   # Веб-клиент на случай, если DBeaver поставить не получится.
   # По умолчанию НЕ запускается: образ весит около 400 МБ, и если его
