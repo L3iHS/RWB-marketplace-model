@@ -1,0 +1,9 @@
+{$APP_DOMAIN} {
+    encode gzip
+    reverse_proxy frontend:80
+}
+
+http://{$APP_IP} {
+    encode gzip
+    reverse_proxy frontend:80
+}
