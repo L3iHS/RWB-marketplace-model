@@ -46,6 +46,9 @@ services:
   # API читает одну согласованную версию модели на весь экран.
   backend:
     build: .
+    networks:
+      default:
+        aliases: [rwb-marketplace-api]
     entrypoint: ["uvicorn"]
     command: ["backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
     restart: unless-stopped
