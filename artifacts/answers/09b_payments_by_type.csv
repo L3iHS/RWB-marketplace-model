@@ -1,0 +1,6 @@
+payment_type,payments,avg_installments
+credit_card,76795,3.51
+boleto,19784,1.00
+voucher,5775,1.00
+debit_card,1529,1.00
+not_defined,3,1.00

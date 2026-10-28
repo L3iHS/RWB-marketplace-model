@@ -215,7 +215,7 @@ def main():
     commands.add_parser('build', help='собрать core и mart с нуля (26 проверок внутри)')
     commands.add_parser('check', help='сверить ответы с контрольными цифрами задания')
     commands.add_parser('test', help='запустить тесты')
-    answers_cmd = commands.add_parser('answers', help='показать ответы 1–5 и опубликовать полный комплект')
+    answers_cmd = commands.add_parser('answers', help='показать ответы 1–10 и опубликовать полный комплект')
     answers_cmd.add_argument('--output-dir', help='каталог результатов (по умолчанию artifacts/runtime/answers/)')
     commands.add_parser('preview', help='первые строки таблиц; параметры как у scripts/preview.py: -n 10 -t orders')
     commands.add_parser('explore', help='разведка raw')

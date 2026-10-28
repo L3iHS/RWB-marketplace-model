@@ -1,5 +1,5 @@
 # Источники
-Материалы задания: https://github.com/daniilivanovp-droid/hackathon-students/tree/3da32d149bfa14dca3fdb0c5863d0771c38efbfc .
+Материалы задания: https://github.com/daniilivanovp-droid/hackathon-students/tree/3da32d149bfa14dca3fdb0c5863d0771c38efbfc ; docs/tasks.md обновлён до 558f0f6a38110acc9fcf4386a7e53ece973aedf5 (вопросы 6–10 и вброс).
 Исходный README сохранён здесь как README.md; относительные ссылки адаптированы к его расположению. docs/handout.md, docs/tasks.md и исходная структура raw взяты из этого снимка.
 Основной запуск — Docker Compose и run.py; PostgreSQL опубликован только на 127.0.0.1:5433. Python, зависимости и psql находятся в образе приложения.
 Данные: Olist, https://github.com/olist/work-at-olist-data ; лицензия датасета CC BY-NC-SA 4.0 по описанию организаторов. CSV не включаются в Git.
