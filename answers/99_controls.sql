@@ -1,41 +1,59 @@
--- Сверка ответов с контрольными цифрами из tasks.md.
--- Запуск: bash build.sh answers/99_controls.sql
+-- Сверка ответов с контрольными цифрами из docs/tasks.md.
+-- Цифры относятся только к выгрузке организаторов, поэтому живут здесь,
+-- а не в проверках сборки (model/90_checks.sql).
+-- Если хоть одна цифра не совпала, скрипт завершается ошибкой.
+--
+-- Запуск: bash build.sh answers/99_controls.sql   (или make check)
 
-WITH q1 AS (
-    SELECT count(*)                          AS months,
-           count(*) FILTER (WHERE revenue = 0) AS zero_months,
-           sum(revenue)                      AS total
-    FROM (
-        SELECT m.month, coalesce(sum(d.price), 0) AS revenue
-        FROM (SELECT DISTINCT month FROM core.calendar
-              WHERE month BETWEEN '2016-09-01' AND '2018-08-01') m
-        LEFT JOIN mart.delivered_items d ON d.purchase_month = m.month
-        GROUP BY m.month
-    ) t
-), q2 AS (
-    SELECT max(revenue) AS top_seller
-    FROM (SELECT seller_id, sum(price) AS revenue FROM mart.delivered_items GROUP BY seller_id) t
-), q3 AS (
-    SELECT round(avg(order_amount), 2) AS avg_check
-    FROM mart.order_totals WHERE is_delivered
-), q4 AS (
-    SELECT count(*) AS customers,
-           round(100.0 * count(*) FILTER (WHERE n >= 2) / count(*), 2) AS returned_pct
-    FROM (SELECT customer_unique_id, count(*) AS n FROM mart.order_totals GROUP BY 1) t
-), q5 AS (
-    SELECT count(*) AS categories, max(revenue) AS top_category, sum(revenue) AS total
-    FROM (SELECT category_id, sum(price) AS revenue FROM mart.delivered_items GROUP BY 1) t
+CREATE TEMP TABLE controls ON COMMIT DROP AS
+WITH period AS (
+    SELECT * FROM mart.monthly_sales
+    WHERE month BETWEEN '2016-09-01' AND '2018-08-01'
 )
-SELECT check_name, actual, expected, CASE WHEN actual = expected THEN 'OK' ELSE 'FAIL' END AS result
-FROM (
-    SELECT '1. месяцев'                 AS check_name, q1.months::text   AS actual, '24'          AS expected FROM q1
-    UNION ALL SELECT '1. месяцев с нулём',          q1.zero_months::text,  '1'           FROM q1
-    UNION ALL SELECT '1. выручка итого',            q1.total::text,        '13221498.11' FROM q1
-    UNION ALL SELECT '2. первый продавец',          q2.top_seller::text,   '226987.93'   FROM q2
-    UNION ALL SELECT '3. средний чек',              q3.avg_check::text,    '159.88'      FROM q3
-    UNION ALL SELECT '4. покупателей',              q4.customers::text,    '96096'       FROM q4
-    UNION ALL SELECT '4. вернулись, %',             q4.returned_pct::text, '3.12'        FROM q4
-    UNION ALL SELECT '5. категорий',                q5.categories::text,   '74'          FROM q5
-    UNION ALL SELECT '5. крупнейшая категория',     q5.top_category::text, '1233131.72'  FROM q5
-    UNION ALL SELECT '5. сумма по категориям',      q5.total::text,        '13221498.11' FROM q5
-) t;
+SELECT '1. месяцев' AS check_name,
+       (SELECT count(*) FROM period)::text AS actual, '24' AS expected
+UNION ALL
+SELECT '1. месяцев с нулевой выручкой',
+       (SELECT count(*) FROM period WHERE revenue = 0)::text, '1'
+UNION ALL
+SELECT '1. выручка итого',
+       (SELECT sum(revenue) FROM period)::text, '13221498.11'
+UNION ALL
+SELECT '2. первый продавец',
+       (SELECT max(revenue) FROM mart.seller_sales)::text, '226987.93'
+UNION ALL
+SELECT '3. средний чек',
+       (SELECT round(avg(order_amount), 2) FROM mart.order_totals WHERE is_delivered)::text, '159.88'
+UNION ALL
+SELECT '4. покупателей',
+       (SELECT count(*) FROM mart.customers)::text, '96096'
+UNION ALL
+SELECT '4. вернулись, %',
+       (SELECT round(100.0 * count(*) FILTER (WHERE orders >= 2) / count(*), 2) FROM mart.customers)::text, '3.12'
+UNION ALL
+SELECT '5. категорий',
+       (SELECT count(*) FROM mart.category_sales)::text, '74'
+UNION ALL
+SELECT '5. крупнейшая категория',
+       (SELECT max(revenue) FROM mart.category_sales)::text, '1233131.72'
+UNION ALL
+SELECT '5. сумма по категориям',
+       (SELECT sum(revenue) FROM mart.category_sales)::text, '13221498.11';
+
+SELECT check_name, actual, expected,
+       CASE WHEN actual = expected THEN 'OK' ELSE 'FAIL' END AS result
+FROM controls
+ORDER BY check_name;
+
+DO $$
+DECLARE
+    failed text;
+BEGIN
+    SELECT string_agg(check_name, '; ') INTO failed
+    FROM controls
+    WHERE actual IS DISTINCT FROM expected;
+
+    IF failed IS NOT NULL THEN
+        RAISE EXCEPTION 'Контрольные цифры не совпали: %', failed;
+    END IF;
+END $$;

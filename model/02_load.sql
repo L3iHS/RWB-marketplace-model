@@ -26,25 +26,31 @@ INSERT INTO core.order_statuses (status_code, is_delivered)
 SELECT DISTINCT order_status, order_status = 'delivered'
 FROM raw.orders;
 
--- 4. Категории: все названия из товаров и из справочника перевода.
--- UNION убирает повторы и оставляет одну строку с NULL — «категория не указана».
-INSERT INTO core.categories (name_pt, name_en)
-SELECT n.name_pt, t.product_category_name_english
+-- 4. Категории. Сначала явная строка для товаров без категории.
+-- Если в источнике когда-нибудь появится настоящая категория '__unknown__',
+-- первичный ключ не даст вставить её второй раз, и сборка остановится.
+INSERT INTO core.categories (category_key, name_pt, name_en)
+VALUES ('__unknown__', NULL, NULL);
+
+-- Затем все названия из товаров и из справочника перевода.
+-- UNION убирает повторы. Перевод присоединяем через LEFT JOIN:
+-- категория без перевода остаётся, у неё просто пустой name_en.
+INSERT INTO core.categories (category_key, name_pt, name_en)
+SELECT n.name_pt, n.name_pt, t.product_category_name_english
 FROM (
     SELECT product_category_name AS name_pt FROM raw.products
+    WHERE product_category_name IS NOT NULL
     UNION
     SELECT product_category_name FROM raw.product_category_translation
 ) n
-LEFT JOIN raw.product_category_translation t ON t.product_category_name = n.name_pt
-ORDER BY n.name_pt NULLS FIRST;
+LEFT JOIN raw.product_category_translation t ON t.product_category_name = n.name_pt;
 
--- 5. Товары. Категорию ищем через IS NOT DISTINCT FROM: в отличие от '=',
--- это сравнение считает NULL равным NULL. С обычным '=' товары без категории
--- не нашли бы свою строку и выпали бы из загрузки.
-INSERT INTO core.products (product_id, category_id, name_length, description_length,
+-- 5. Товары. Товар без категории ссылается на '__unknown__', а не теряется:
+-- иначе сумма выручки по категориям не сойдётся с общей.
+INSERT INTO core.products (product_id, category_key, name_length, description_length,
                            photos_qty, weight_g, length_cm, height_cm, width_cm)
 SELECT p.product_id,
-       c.category_id,
+       coalesce(p.product_category_name, '__unknown__'),
        p.product_name_lenght::integer,  -- опечатка lenght — из исходного файла
        p.product_description_lenght::integer,
        p.product_photos_qty::integer,
@@ -52,8 +58,7 @@ SELECT p.product_id,
        p.product_length_cm::integer,
        p.product_height_cm::integer,
        p.product_width_cm::integer
-FROM raw.products p
-JOIN core.categories c ON c.name_pt IS NOT DISTINCT FROM p.product_category_name;
+FROM raw.products p;
 
 -- 6. Продавцы.
 INSERT INTO core.sellers (seller_id, zip_code_prefix, city, state)

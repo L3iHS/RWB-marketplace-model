@@ -1,9 +1,10 @@
 -- Проверки после сборки. Если хоть одна не прошла, сборка падает
 -- и вся транзакция откатывается: старая версия модели остаётся на месте.
 --
--- Здесь только инварианты переноса (core совпадает с raw), а не контрольные
--- цифры задания: так проверки работают и на новых выгрузках.
--- Контрольные цифры проверяются отдельно, в answers/.
+-- Здесь только инварианты переноса (core совпадает с raw, витрины не теряют
+-- и не размножают строки и деньги), а не контрольные цифры задания:
+-- так проверки работают и на новых выгрузках.
+-- Контрольные цифры проверяются отдельно: answers/99_controls.sql.
 
 CREATE TEMP TABLE build_checks ON COMMIT DROP AS
 
@@ -41,8 +42,7 @@ SELECT 'категории: совпадают с источником',
            SELECT 1
            FROM raw.products r
            JOIN core.products p USING (product_id)
-           JOIN core.categories c USING (category_id)
-           WHERE c.name_pt IS DISTINCT FROM r.product_category_name
+           WHERE p.category_key <> coalesce(r.product_category_name, '__unknown__')
        )
 UNION ALL
 
@@ -57,25 +57,51 @@ SELECT 'суммы: payment_value',
        (SELECT sum(payment_value::numeric) FROM raw.order_payments) = (SELECT sum(payment_value) FROM core.order_payments)
 UNION ALL
 
--- 5. Витрины не теряют и не размножают строки и деньги.
-SELECT 'витрина order_totals: одна строка на заказ',
+-- 5. Витрина заказов: одна строка на заказ, дочерние строки не размножены.
+SELECT 'order_totals: одна строка на заказ',
        (SELECT count(*) FROM mart.order_totals) = (SELECT count(*) FROM core.orders)
 UNION ALL
-SELECT 'витрина order_totals: сумма товаров',
+SELECT 'order_totals: сумма товаров',
        (SELECT sum(goods_amount) FROM mart.order_totals) = (SELECT sum(price) FROM core.order_items)
 UNION ALL
-SELECT 'витрина order_totals: сумма платежей',
+SELECT 'order_totals: сумма платежей',
        (SELECT sum(paid_amount) FROM mart.order_totals) = (SELECT sum(payment_value) FROM core.order_payments)
 UNION ALL
-SELECT 'витрина delivered_items: выручка = позиции доставленных заказов',
-       (SELECT sum(price) FROM mart.delivered_items) =
+SELECT 'order_totals: число платежей',
+       (SELECT sum(payment_records) FROM mart.order_totals) = (SELECT count(*) FROM core.order_payments)
+UNION ALL
+SELECT 'order_totals: число отзывов',
+       (SELECT sum(review_count) FROM mart.order_totals) = (SELECT count(*) FROM core.order_reviews)
+UNION ALL
+
+-- 6. Выручка одна и та же, как её ни разрезай: по позициям, продавцам,
+-- категориям, месяцам. Если какой-то разрез теряет строки, суммы разойдутся.
+SELECT 'выручка: delivered_items = позиции доставленных заказов',
+       (SELECT sum(price) FROM mart.delivered_items) IS NOT DISTINCT FROM
        (SELECT sum(i.price)
         FROM core.order_items i
         JOIN core.orders o USING (order_id)
         WHERE o.status_code = 'delivered')
 UNION ALL
+SELECT 'выручка: по продавцам = общая',
+       (SELECT sum(revenue) FROM mart.seller_sales) IS NOT DISTINCT FROM (SELECT sum(price) FROM mart.delivered_items)
+UNION ALL
+SELECT 'выручка: по категориям = общая',
+       (SELECT sum(revenue) FROM mart.category_sales) IS NOT DISTINCT FROM (SELECT sum(price) FROM mart.delivered_items)
+UNION ALL
+SELECT 'выручка: по месяцам = общая',
+       (SELECT sum(revenue) FROM mart.monthly_sales) = coalesce((SELECT sum(price) FROM mart.delivered_items), 0)
+UNION ALL
+SELECT 'выручка: по покупателям = общая',
+       (SELECT sum(revenue) FROM mart.customers) IS NOT DISTINCT FROM (SELECT sum(price) FROM mart.delivered_items)
+UNION ALL
 
--- 6. Календарь без дыр и покрывает все даты покупок.
+-- 7. Покупатели: в витрине все люди, каждый по одному разу.
+SELECT 'customers: одна строка на человека',
+       (SELECT count(*) FROM mart.customers) = (SELECT count(*) FROM core.customers)
+UNION ALL
+
+-- 8. Календарь без дыр и покрывает все даты покупок.
 SELECT 'календарь: без пропущенных дней',
        (SELECT count(*) FROM core.calendar) = (SELECT max(date) - min(date) + 1 FROM core.calendar)
 UNION ALL
@@ -83,12 +109,23 @@ SELECT 'календарь: покрывает все покупки',
        NOT EXISTS (
            SELECT 1 FROM core.orders o
            WHERE NOT EXISTS (SELECT 1 FROM core.calendar c WHERE c.date = o.purchased_at::date)
-       );
+       )
+UNION ALL
+
+-- 9. Нет критических проблем качества (например, доставленного заказа без позиций).
+SELECT 'качество: нет проблем уровня error',
+       NOT EXISTS (SELECT 1 FROM mart.quality_issues WHERE severity = 'error');
 
 -- Печатаем результат: непройденные проверки наверху.
 SELECT check_name, CASE WHEN ok THEN 'OK' ELSE 'FAIL' END AS result
 FROM build_checks
 ORDER BY ok, check_name;
+
+-- Сводка по проблемам качества: что есть в данных и сколько.
+SELECT severity, issue_code, count(*) AS records
+FROM mart.quality_issues
+GROUP BY severity, issue_code
+ORDER BY severity, issue_code;
 
 -- Останавливаем сборку, если что-то не прошло.
 DO $$

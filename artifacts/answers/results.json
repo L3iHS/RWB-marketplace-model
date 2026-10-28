@@ -1,0 +1,666 @@
+{
+  "01_monthly_revenue": [
+    {
+      "month": "2016-09",
+      "orders": 1,
+      "revenue": "134.97"
+    },
+    {
+      "month": "2016-10",
+      "orders": 265,
+      "revenue": "40325.11"
+    },
+    {
+      "month": "2016-11",
+      "orders": 0,
+      "revenue": "0"
+    },
+    {
+      "month": "2016-12",
+      "orders": 1,
+      "revenue": "10.90"
+    },
+    {
+      "month": "2017-01",
+      "orders": 750,
+      "revenue": "111798.36"
+    },
+    {
+      "month": "2017-02",
+      "orders": 1653,
+      "revenue": "234223.40"
+    },
+    {
+      "month": "2017-03",
+      "orders": 2546,
+      "revenue": "359198.85"
+    },
+    {
+      "month": "2017-04",
+      "orders": 2303,
+      "revenue": "340669.68"
+    },
+    {
+      "month": "2017-05",
+      "orders": 3546,
+      "revenue": "489338.25"
+    },
+    {
+      "month": "2017-06",
+      "orders": 3135,
+      "revenue": "421923.37"
+    },
+    {
+      "month": "2017-07",
+      "orders": 3872,
+      "revenue": "481604.52"
+    },
+    {
+      "month": "2017-08",
+      "orders": 4193,
+      "revenue": "554699.70"
+    },
+    {
+      "month": "2017-09",
+      "orders": 4150,
+      "revenue": "607399.67"
+    },
+    {
+      "month": "2017-10",
+      "orders": 4478,
+      "revenue": "648247.65"
+    },
+    {
+      "month": "2017-11",
+      "orders": 7289,
+      "revenue": "987765.37"
+    },
+    {
+      "month": "2017-12",
+      "orders": 5513,
+      "revenue": "726033.19"
+    },
+    {
+      "month": "2018-01",
+      "orders": 7069,
+      "revenue": "924645.00"
+    },
+    {
+      "month": "2018-02",
+      "orders": 6555,
+      "revenue": "826437.13"
+    },
+    {
+      "month": "2018-03",
+      "orders": 7003,
+      "revenue": "953356.25"
+    },
+    {
+      "month": "2018-04",
+      "orders": 6798,
+      "revenue": "973534.09"
+    },
+    {
+      "month": "2018-05",
+      "orders": 6749,
+      "revenue": "977544.69"
+    },
+    {
+      "month": "2018-06",
+      "orders": 6099,
+      "revenue": "856077.86"
+    },
+    {
+      "month": "2018-07",
+      "orders": 6159,
+      "revenue": "867953.46"
+    },
+    {
+      "month": "2018-08",
+      "orders": 6351,
+      "revenue": "838576.64"
+    }
+  ],
+  "02_top_sellers": [
+    {
+      "seller_id": "4869f7a5dfa277a7dca6462dcf3b52b2",
+      "city": "guariba",
+      "state": "SP",
+      "orders": 1124,
+      "units": 1148,
+      "revenue": "226987.93"
+    },
+    {
+      "seller_id": "53243585a1d6dc2643021fd1853d8905",
+      "city": "lauro de freitas",
+      "state": "BA",
+      "orders": 348,
+      "units": 400,
+      "revenue": "217940.44"
+    },
+    {
+      "seller_id": "4a3ca9315b744ce9f8e9374361493884",
+      "city": "ibitinga",
+      "state": "SP",
+      "orders": 1772,
+      "units": 1949,
+      "revenue": "196882.12"
+    },
+    {
+      "seller_id": "fa1c13f2614d7b5c4749cbc52fecda94",
+      "city": "sumare",
+      "state": "SP",
+      "orders": 578,
+      "units": 579,
+      "revenue": "190917.14"
+    },
+    {
+      "seller_id": "7c67e1448b00f6e969d365cea6b010ab",
+      "city": "itaquaquecetuba",
+      "state": "SP",
+      "orders": 973,
+      "units": 1355,
+      "revenue": "186570.05"
+    },
+    {
+      "seller_id": "7e93a43ef30c4f03f38b393420bc753a",
+      "city": "barueri",
+      "state": "SP",
+      "orders": 319,
+      "units": 322,
+      "revenue": "165981.49"
+    },
+    {
+      "seller_id": "da8622b14eb17ae2831f4ac5b9dab84a",
+      "city": "piracicaba",
+      "state": "SP",
+      "orders": 1311,
+      "units": 1548,
+      "revenue": "159816.87"
+    },
+    {
+      "seller_id": "7a67c85e85bb2ce8582c35f2203ad736",
+      "city": "sao paulo",
+      "state": "SP",
+      "orders": 1145,
+      "units": 1155,
+      "revenue": "139658.69"
+    },
+    {
+      "seller_id": "1025f0e2d44d7041d6cf58b6550e0bfa",
+      "city": "sao paulo",
+      "state": "SP",
+      "orders": 910,
+      "units": 1420,
+      "revenue": "138208.56"
+    },
+    {
+      "seller_id": "955fee9216a65b617aa5c0531780ce60",
+      "city": "sao paulo",
+      "state": "SP",
+      "orders": 1261,
+      "units": 1472,
+      "revenue": "131836.71"
+    }
+  ],
+  "03_average_order": [
+    {
+      "average_check": "159.88",
+      "average_lines": "1.0385",
+      "average_units": "1.1422"
+    }
+  ],
+  "04_repeat_customers": [
+    {
+      "customers": 96096,
+      "returned": 2997,
+      "returned_pct": "3.12"
+    }
+  ],
+  "05_category_revenue": [
+    {
+      "category": "health_beauty",
+      "category_key": "beleza_saude",
+      "revenue": "1233131.72",
+      "revenue_pct": "9.33"
+    },
+    {
+      "category": "watches_gifts",
+      "category_key": "relogios_presentes",
+      "revenue": "1166176.98",
+      "revenue_pct": "8.82"
+    },
+    {
+      "category": "bed_bath_table",
+      "category_key": "cama_mesa_banho",
+      "revenue": "1023434.76",
+      "revenue_pct": "7.74"
+    },
+    {
+      "category": "sports_leisure",
+      "category_key": "esporte_lazer",
+      "revenue": "954852.55",
+      "revenue_pct": "7.22"
+    },
+    {
+      "category": "computers_accessories",
+      "category_key": "informatica_acessorios",
+      "revenue": "888724.61",
+      "revenue_pct": "6.72"
+    },
+    {
+      "category": "furniture_decor",
+      "category_key": "moveis_decoracao",
+      "revenue": "711927.69",
+      "revenue_pct": "5.38"
+    },
+    {
+      "category": "housewares",
+      "category_key": "utilidades_domesticas",
+      "revenue": "615628.69",
+      "revenue_pct": "4.66"
+    },
+    {
+      "category": "cool_stuff",
+      "category_key": "cool_stuff",
+      "revenue": "610204.10",
+      "revenue_pct": "4.62"
+    },
+    {
+      "category": "auto",
+      "category_key": "automotivo",
+      "revenue": "578966.65",
+      "revenue_pct": "4.38"
+    },
+    {
+      "category": "toys",
+      "category_key": "brinquedos",
+      "revenue": "471286.48",
+      "revenue_pct": "3.56"
+    },
+    {
+      "category": "garden_tools",
+      "category_key": "ferramentas_jardim",
+      "revenue": "470495.28",
+      "revenue_pct": "3.56"
+    },
+    {
+      "category": "baby",
+      "category_key": "bebes",
+      "revenue": "400421.84",
+      "revenue_pct": "3.03"
+    },
+    {
+      "category": "perfumery",
+      "category_key": "perfumaria",
+      "revenue": "390144.65",
+      "revenue_pct": "2.95"
+    },
+    {
+      "category": "telephony",
+      "category_key": "telefonia",
+      "revenue": "309860.23",
+      "revenue_pct": "2.34"
+    },
+    {
+      "category": "office_furniture",
+      "category_key": "moveis_escritorio",
+      "revenue": "268154.31",
+      "revenue_pct": "2.03"
+    },
+    {
+      "category": "stationery",
+      "category_key": "papelaria",
+      "revenue": "223788.69",
+      "revenue_pct": "1.69"
+    },
+    {
+      "category": "computers",
+      "category_key": "pcs",
+      "revenue": "218684.14",
+      "revenue_pct": "1.65"
+    },
+    {
+      "category": "pet_shop",
+      "category_key": "pet_shop",
+      "revenue": "211695.64",
+      "revenue_pct": "1.60"
+    },
+    {
+      "category": "musical_instruments",
+      "category_key": "instrumentos_musicais",
+      "revenue": "184315.74",
+      "revenue_pct": "1.39"
+    },
+    {
+      "category": "small_appliances",
+      "category_key": "eletroportateis",
+      "revenue": "182754.12",
+      "revenue_pct": "1.38"
+    },
+    {
+      "category": "unknown",
+      "category_key": "__unknown__",
+      "revenue": "170726.63",
+      "revenue_pct": "1.29"
+    },
+    {
+      "category": "electronics",
+      "category_key": "eletronicos",
+      "revenue": "155043.93",
+      "revenue_pct": "1.17"
+    },
+    {
+      "category": "fashion_bags_accessories",
+      "category_key": "fashion_bolsas_e_acessorios",
+      "revenue": "149329.39",
+      "revenue_pct": "1.13"
+    },
+    {
+      "category": "consoles_games",
+      "category_key": "consoles_games",
+      "revenue": "148003.37",
+      "revenue_pct": "1.12"
+    },
+    {
+      "category": "construction_tools_construction",
+      "category_key": "construcao_ferramentas_construcao",
+      "revenue": "142108.49",
+      "revenue_pct": "1.07"
+    },
+    {
+      "category": "luggage_accessories",
+      "category_key": "malas_acessorios",
+      "revenue": "138701.63",
+      "revenue_pct": "1.05"
+    },
+    {
+      "category": "home_appliances_2",
+      "category_key": "eletrodomesticos_2",
+      "revenue": "107953.95",
+      "revenue_pct": "0.82"
+    },
+    {
+      "category": "home_construction",
+      "category_key": "casa_construcao",
+      "revenue": "81407.57",
+      "revenue_pct": "0.62"
+    },
+    {
+      "category": "home_appliances",
+      "category_key": "eletrodomesticos",
+      "revenue": "78832.48",
+      "revenue_pct": "0.60"
+    },
+    {
+      "category": "agro_industry_and_commerce",
+      "category_key": "agro_industria_e_comercio",
+      "revenue": "70566.10",
+      "revenue_pct": "0.53"
+    },
+    {
+      "category": "furniture_living_room",
+      "category_key": "moveis_sala",
+      "revenue": "67350.70",
+      "revenue_pct": "0.51"
+    },
+    {
+      "category": "home_confort",
+      "category_key": "casa_conforto",
+      "revenue": "58008.45",
+      "revenue_pct": "0.44"
+    },
+    {
+      "category": "fixed_telephony",
+      "category_key": "telefonia_fixa",
+      "revenue": "55315.21",
+      "revenue_pct": "0.42"
+    },
+    {
+      "category": "air_conditioning",
+      "category_key": "climatizacao",
+      "revenue": "53323.56",
+      "revenue_pct": "0.40"
+    },
+    {
+      "category": "audio",
+      "category_key": "audio",
+      "revenue": "50570.60",
+      "revenue_pct": "0.38"
+    },
+    {
+      "category": "small_appliances_home_oven_and_coffee",
+      "category_key": "portateis_casa_forno_e_cafe",
+      "revenue": "46589.56",
+      "revenue_pct": "0.35"
+    },
+    {
+      "category": "kitchen_dining_laundry_garden_furniture",
+      "category_key": "moveis_cozinha_area_de_servico_jantar_e_jardim",
+      "revenue": "45531.98",
+      "revenue_pct": "0.34"
+    },
+    {
+      "category": "books_general_interest",
+      "category_key": "livros_interesse_geral",
+      "revenue": "45302.15",
+      "revenue_pct": "0.34"
+    },
+    {
+      "category": "construction_tools_lights",
+      "category_key": "construcao_ferramentas_iluminacao",
+      "revenue": "39957.00",
+      "revenue_pct": "0.30"
+    },
+    {
+      "category": "construction_tools_safety",
+      "category_key": "construcao_ferramentas_seguranca",
+      "revenue": "38773.22",
+      "revenue_pct": "0.29"
+    },
+    {
+      "category": "industry_commerce_and_business",
+      "category_key": "industria_comercio_e_negocios",
+      "revenue": "38498.81",
+      "revenue_pct": "0.29"
+    },
+    {
+      "category": "food",
+      "category_key": "alimentos",
+      "revenue": "28731.15",
+      "revenue_pct": "0.22"
+    },
+    {
+      "category": "market_place",
+      "category_key": "market_place",
+      "revenue": "27795.77",
+      "revenue_pct": "0.21"
+    },
+    {
+      "category": "costruction_tools_garden",
+      "category_key": "construcao_ferramentas_jardim",
+      "revenue": "25096.28",
+      "revenue_pct": "0.19"
+    },
+    {
+      "category": "art",
+      "category_key": "artes",
+      "revenue": "23657.30",
+      "revenue_pct": "0.18"
+    },
+    {
+      "category": "fashion_shoes",
+      "category_key": "fashion_calcados",
+      "revenue": "23001.46",
+      "revenue_pct": "0.17"
+    },
+    {
+      "category": "drinks",
+      "category_key": "bebidas",
+      "revenue": "21529.84",
+      "revenue_pct": "0.16"
+    },
+    {
+      "category": "signaling_and_security",
+      "category_key": "sinalizacao_e_seguranca",
+      "revenue": "21315.05",
+      "revenue_pct": "0.16"
+    },
+    {
+      "category": "furniture_bedroom",
+      "category_key": "moveis_quarto",
+      "revenue": "19051.80",
+      "revenue_pct": "0.14"
+    },
+    {
+      "category": "books_technical",
+      "category_key": "livros_tecnicos",
+      "revenue": "18702.23",
+      "revenue_pct": "0.14"
+    },
+    {
+      "category": "costruction_tools_tools",
+      "category_key": "construcao_ferramentas_ferramentas",
+      "revenue": "15903.95",
+      "revenue_pct": "0.12"
+    },
+    {
+      "category": "food_drink",
+      "category_key": "alimentos_bebidas",
+      "revenue": "14942.88",
+      "revenue_pct": "0.11"
+    },
+    {
+      "category": "fashion_male_clothing",
+      "category_key": "fashion_roupa_masculina",
+      "revenue": "10452.33",
+      "revenue_pct": "0.08"
+    },
+    {
+      "category": "fashion_underwear_beach",
+      "category_key": "fashion_underwear_e_moda_praia",
+      "revenue": "9305.95",
+      "revenue_pct": "0.07"
+    },
+    {
+      "category": "christmas_supplies",
+      "category_key": "artigos_de_natal",
+      "revenue": "8737.84",
+      "revenue_pct": "0.07"
+    },
+    {
+      "category": "tablets_printing_image",
+      "category_key": "tablets_impressao_imagem",
+      "revenue": "7528.41",
+      "revenue_pct": "0.06"
+    },
+    {
+      "category": "cine_photo",
+      "category_key": "cine_foto",
+      "revenue": "6674.47",
+      "revenue_pct": "0.05"
+    },
+    {
+      "category": "music",
+      "category_key": "musica",
+      "revenue": "6034.35",
+      "revenue_pct": "0.05"
+    },
+    {
+      "category": "dvds_blu_ray",
+      "category_key": "dvds_blu_ray",
+      "revenue": "4542.59",
+      "revenue_pct": "0.03"
+    },
+    {
+      "category": "party_supplies",
+      "category_key": "artigos_de_festas",
+      "revenue": "4465.19",
+      "revenue_pct": "0.03"
+    },
+    {
+      "category": "books_imported",
+      "category_key": "livros_importados",
+      "revenue": "4418.86",
+      "revenue_pct": "0.03"
+    },
+    {
+      "category": "furniture_mattress_and_upholstery",
+      "category_key": "moveis_colchao_e_estofado",
+      "revenue": "4323.38",
+      "revenue_pct": "0.03"
+    },
+    {
+      "category": "portateis_cozinha_e_preparadores_de_alimentos",
+      "category_key": "portateis_cozinha_e_preparadores_de_alimentos",
+      "revenue": "3933.63",
+      "revenue_pct": "0.03"
+    },
+    {
+      "category": "fashio_female_clothing",
+      "category_key": "fashion_roupa_feminina",
+      "revenue": "2634.94",
+      "revenue_pct": "0.02"
+    },
+    {
+      "category": "fashion_sport",
+      "category_key": "fashion_esporte",
+      "revenue": "2094.52",
+      "revenue_pct": "0.02"
+    },
+    {
+      "category": "la_cuisine",
+      "category_key": "la_cuisine",
+      "revenue": "2054.99",
+      "revenue_pct": "0.02"
+    },
+    {
+      "category": "arts_and_craftmanship",
+      "category_key": "artes_e_artesanato",
+      "revenue": "1814.01",
+      "revenue_pct": "0.01"
+    },
+    {
+      "category": "diapers_and_hygiene",
+      "category_key": "fraldas_higiene",
+      "revenue": "1500.79",
+      "revenue_pct": "0.01"
+    },
+    {
+      "category": "pc_gamer",
+      "category_key": "pc_gamer",
+      "revenue": "1306.95",
+      "revenue_pct": "0.01"
+    },
+    {
+      "category": "flowers",
+      "category_key": "flores",
+      "revenue": "1110.04",
+      "revenue_pct": "0.01"
+    },
+    {
+      "category": "home_comfort_2",
+      "category_key": "casa_conforto_2",
+      "revenue": "760.27",
+      "revenue_pct": "0.01"
+    },
+    {
+      "category": "cds_dvds_musicals",
+      "category_key": "cds_dvds_musicais",
+      "revenue": "730.00",
+      "revenue_pct": "0.01"
+    },
+    {
+      "category": "fashion_childrens_clothes",
+      "category_key": "fashion_roupa_infanto_juvenil",
+      "revenue": "519.95",
+      "revenue_pct": "0.00"
+    },
+    {
+      "category": "security_and_services",
+      "category_key": "seguros_e_servicos",
+      "revenue": "283.29",
+      "revenue_pct": "0.00"
+    }
+  ]
+}

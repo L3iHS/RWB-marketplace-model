@@ -12,13 +12,7 @@
 --
 -- Контроль: 96 096 покупателей, вернулись 3.12%.
 
-WITH per_customer AS (
-    SELECT customer_unique_id,
-           count(*) AS orders
-    FROM mart.order_totals
-    GROUP BY customer_unique_id
-)
 SELECT count(*)                                AS customers,
        count(*) FILTER (WHERE orders >= 2)     AS returned,
        round(100.0 * count(*) FILTER (WHERE orders >= 2) / count(*), 2) AS returned_pct
-FROM per_customer;
+FROM mart.customers;
