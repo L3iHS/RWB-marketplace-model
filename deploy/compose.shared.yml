@@ -1,0 +1,12 @@
+services:
+  frontend:
+    networks:
+      default:
+      shared_edge:
+        aliases:
+          - rwb-marketplace-ui
+
+networks:
+  shared_edge:
+    external: true
+    name: ${EDGE_NETWORK:?Set EDGE_NETWORK to the existing proxy network in deploy/.env}

@@ -70,6 +70,7 @@ services:
         condition: service_healthy
 
   caddy:
+    profiles: ["standalone"]
     image: caddy:2-alpine
     restart: unless-stopped
     mem_limit: 96m

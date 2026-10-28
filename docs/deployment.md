@@ -2,16 +2,15 @@
 
 Отдельный Compose для Ubuntu с Docker Engine и Compose v2+ находится в
 `deploy/compose.yml`. Все команды ниже выполняются из корня репозитория.
-Снаружи доступны только Caddy на TCP 80 и 443; PostgreSQL, API и nginx работают
-в сети Compose. Лимиты памяти рассчитаны на демонстрационный сервер с 2 ГБ RAM.
+PostgreSQL и API работают в сети Compose. Frontend доступен через отдельный
+Caddy либо через существующий прокси сервера; собственные порты frontend не публикует.
+Лимиты памяти рассчитаны на демонстрационный сервер с 2 ГБ RAM.
 CLI запускается отдельной командой и не включается в обычный `up`.
 
 ## Окружение и сборка
 
-Порты 80 и 443 сервера должны быть свободны и доступны из интернета.
 Для HTTPS направьте A-запись `y.cloud-path.ru` на `178.154.248.37`;
 если есть AAAA-запись, она тоже должна вести на этот сервер.
-До обновления DNS доступен HTTP по IP.
 
 Создайте локальный файл с новым случайным паролем:
 
@@ -28,7 +27,9 @@ PY
 ```
 
 `.env` исключён из Git. Пустой пароль блокирует запуск Compose. Значения
-`APP_DOMAIN` и `APP_IP` можно изменить в этом файле. Не пересоздавайте `.env`
+`APP_DOMAIN` и `APP_IP` можно изменить в этом файле. Для существующего прокси
+замените `EDGE_NETWORK=placeholder` именем Docker-сети, к которой подключён Caddy.
+Не пересоздавайте `.env`
 при обновлении существующей установки: пароль должен соответствовать БД.
 
 ```bash
@@ -64,33 +65,76 @@ API работает одним процессом, поскольку защи�
 
 ## Запуск и проверка
 
+### Через существующий Caddy
+
+Используйте этот режим, когда порты 80/443 уже обслуживает другой проект.
+Его Caddy и frontend нового приложения должны быть подключены к одной
+существующей Docker-сети. Override подключает только frontend к сети
+`EDGE_NETWORK` с alias `rwb-marketplace-ui`; PostgreSQL и API остаются в сети
+этого проекта. Новый Caddy не запускается, дополнительные порты не открываются.
+
 ```bash
-docker compose -f deploy/compose.yml --env-file deploy/.env up -d
-docker compose -f deploy/compose.yml --env-file deploy/.env ps
+docker compose -f deploy/compose.yml -f deploy/compose.shared.yml --env-file deploy/.env config --quiet
+docker compose -f deploy/compose.yml -f deploy/compose.shared.yml --env-file deploy/.env up -d
+docker compose -f deploy/compose.yml -f deploy/compose.shared.yml --env-file deploy/.env ps
+```
+
+В конфигурацию существующего Caddy добавьте отдельный виртуальный хост,
+сохраняя остальные сайты:
+
+```caddyfile
+y.cloud-path.ru {
+    encode gzip
+    reverse_proxy rwb-marketplace-ui:80
+}
+```
+
+Проверьте конфигурацию средствами существующего Caddy и примените её штатным
+reload. В этом режиме HTTP по IP остаётся под управлением существующего прокси;
+проверяйте новый сайт по домену:
+
+```bash
+curl --fail https://y.cloud-path.ru/api/health
+curl --fail https://y.cloud-path.ru/api/demo/status
+```
+
+### Отдельный сервер
+
+Для выделенного сервера со свободными и доступными извне TCP 80/443 включите
+профиль `standalone`. Он запускает Caddy с автоматическим HTTPS по домену
+и HTTP по IP для проверки до обновления DNS.
+
+```bash
+docker compose -f deploy/compose.yml --env-file deploy/.env --profile standalone up -d
+docker compose -f deploy/compose.yml --env-file deploy/.env --profile standalone ps
 curl --fail http://178.154.248.37/api/health
 curl --fail http://178.154.248.37/api/demo/status
 curl --fail https://y.cloud-path.ru/api/health
 ```
 
-Ожидаемый ответ `/api/health`: `{"status":"ok"}`. После настройки DNS Caddy
-получает и обновляет сертификат автоматически; до этого проверяйте HTTP по IP.
-В браузере доступны `http://178.154.248.37` и `https://y.cloud-path.ru`.
-При ошибке смотрите:
+Ожидаемый ответ `/api/health` для обоих режимов: `{"status":"ok"}`.
+После настройки DNS Caddy получает и обновляет сертификат автоматически.
+При ошибке приложения смотрите:
 
 ```bash
-docker compose -f deploy/compose.yml --env-file deploy/.env logs --tail 100 backend caddy postgres
+docker compose -f deploy/compose.yml --env-file deploy/.env logs --tail 100 backend postgres
 ```
+
+Журнал прокси просматривайте в проекте существующего Caddy либо у сервиса
+`caddy` с профилем `standalone`.
 
 ## Данные и перезапуск
 
 PostgreSQL хранит обе базы и историю в named volume `rwb-marketplace_pgdata`.
-Сертификаты Caddy сохраняются в `rwb-marketplace_caddy_data`, его настройки —
+В режиме `standalone` сертификаты Caddy сохраняются в `rwb-marketplace_caddy_data`, его настройки —
 в `rwb-marketplace_caddy_config`. `data/` и `artifacts/runtime/` находятся на
 сервере в репозитории и доступны контейнерам через bind mount.
 
 `docker compose -f deploy/compose.yml --env-file deploy/.env down` сохраняет
 volumes. Для обычного обновления достаточно пересобрать изменившиеся образы
-и выполнить `up -d`. Не используйте `down -v`, `docker volume prune` и не удаляйте
+и выполнить `up -d` с теми же файлами Compose и профилем, что при первом запуске.
+В shared-режиме добавляйте `-f deploy/compose.shared.yml`, в отдельном —
+`--profile standalone`. Не используйте `down -v`, `docker volume prune` и не удаляйте
 каталоги `data/`, `artifacts/runtime/`: это удаляет данные или файлы демонстрации.
 Сохраняйте имя проекта `rwb-marketplace`, чтобы после обновления подключались
 те же volumes. Замена пароля в `.env` сама по себе не меняет пароль существующей БД.
