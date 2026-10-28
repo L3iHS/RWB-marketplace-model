@@ -1,0 +1,16 @@
+#   bash scripts/download_data.sh
+data/*.csv
+
+# Мусор macOS
+.DS_Store
+
+# Кэш Python
+__pycache__/
+*.pyc
+.venv/
+.env
+artifacts/runtime/
+
+# Локальные настройки редакторов
+.idea/
+.vscode/

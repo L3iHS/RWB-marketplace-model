@@ -1,0 +1,273 @@
+{
+  "counts": [
+    {
+      "entity": "customers",
+      "rows": 99441
+    },
+    {
+      "entity": "order_items",
+      "rows": 112650
+    },
+    {
+      "entity": "order_payments",
+      "rows": 103886
+    },
+    {
+      "entity": "order_reviews",
+      "rows": 99224
+    },
+    {
+      "entity": "orders",
+      "rows": 99441
+    },
+    {
+      "entity": "product_category_translation",
+      "rows": 71
+    },
+    {
+      "entity": "products",
+      "rows": 32951
+    },
+    {
+      "entity": "sellers",
+      "rows": 3095
+    }
+  ],
+  "statuses": [
+    {
+      "order_status": "approved",
+      "count": 2
+    },
+    {
+      "order_status": "canceled",
+      "count": 625
+    },
+    {
+      "order_status": "created",
+      "count": 5
+    },
+    {
+      "order_status": "delivered",
+      "count": 96478
+    },
+    {
+      "order_status": "invoiced",
+      "count": 314
+    },
+    {
+      "order_status": "processing",
+      "count": 301
+    },
+    {
+      "order_status": "shipped",
+      "count": 1107
+    },
+    {
+      "order_status": "unavailable",
+      "count": 609
+    }
+  ],
+  "keys": [
+    {
+      "key": "person_id",
+      "duplicates": 96096
+    },
+    {
+      "key": "payment",
+      "duplicates": 0
+    },
+    {
+      "key": "review_order_pair",
+      "duplicates": 0
+    },
+    {
+      "key": "order_item",
+      "duplicates": 0
+    },
+    {
+      "key": "order_id",
+      "duplicates": 0
+    },
+    {
+      "key": "review_id",
+      "duplicates": 814
+    },
+    {
+      "key": "customer_id",
+      "duplicates": 0
+    }
+  ],
+  "missing": [
+    {
+      "approval": 160,
+      "carrier": 1783,
+      "delivered": 2965,
+      "delivered_without_date": 8
+    }
+  ],
+  "categories": [
+    {
+      "names": 73,
+      "products_missing": 610,
+      "products_untranslated": 13,
+      "untranslated": [
+        "pc_gamer",
+        "portateis_cozinha_e_preparadores_de_alimentos"
+      ]
+    }
+  ],
+  "order_totals": [
+    {
+      "order_status": "approved",
+      "orders": 2,
+      "orders_with_items": 2,
+      "goods": "209.60",
+      "freight": "31.48",
+      "payments": "241.08",
+      "avg_basket": "120.5400000000000000",
+      "avg_units": "1.5000000000000000",
+      "mismatches": 0
+    },
+    {
+      "order_status": "canceled",
+      "orders": 625,
+      "orders_with_items": 461,
+      "goods": "95235.27",
+      "freight": "10650.45",
+      "payments": "143255.60",
+      "avg_basket": "229.6870281995661605",
+      "avg_units": "1.1757049891540130",
+      "mismatches": 2
+    },
+    {
+      "order_status": "created",
+      "orders": 5,
+      "orders_with_items": 0,
+      "goods": null,
+      "freight": null,
+      "payments": "688.10",
+      "avg_basket": null,
+      "avg_units": null,
+      "mismatches": 0
+    },
+    {
+      "order_status": "delivered",
+      "orders": 96478,
+      "orders_with_items": 96478,
+      "goods": "13221498.11",
+      "freight": "2202965.54",
+      "payments": "15422461.77",
+      "avg_basket": "159.8754498434876345",
+      "avg_units": "1.1421982213561641",
+      "mismatches": 362
+    },
+    {
+      "order_status": "invoiced",
+      "orders": 314,
+      "orders_with_items": 312,
+      "goods": "61526.37",
+      "freight": "7462.38",
+      "payments": "69137.99",
+      "avg_basket": "221.1177884615384615",
+      "avg_units": "1.1506410256410256",
+      "mismatches": 0
+    },
+    {
+      "order_status": "processing",
+      "orders": 301,
+      "orders_with_items": 301,
+      "goods": "60439.22",
+      "freight": "8954.89",
+      "payments": "69394.11",
+      "avg_basket": "230.5452159468438538",
+      "avg_units": "1.1860465116279070",
+      "mismatches": 0
+    },
+    {
+      "order_status": "shipped",
+      "orders": 1107,
+      "orders_with_items": 1106,
+      "goods": "150727.44",
+      "freight": "26401.90",
+      "payments": "177213.96",
+      "avg_basket": "160.1531103074141049",
+      "avg_units": "1.0714285714285714",
+      "mismatches": 2
+    },
+    {
+      "order_status": "unavailable",
+      "orders": 609,
+      "orders_with_items": 6,
+      "goods": "2007.69",
+      "freight": "132.80",
+      "payments": "126479.51",
+      "avg_basket": "356.7483333333333333",
+      "avg_units": "1.1666666666666667",
+      "mismatches": 0
+    }
+  ],
+  "orphans": [
+    {
+      "relation": "item_seller",
+      "count": 0
+    },
+    {
+      "relation": "item_product",
+      "count": 0
+    },
+    {
+      "relation": "payment_order",
+      "count": 0
+    },
+    {
+      "relation": "item_order",
+      "count": 0
+    },
+    {
+      "relation": "review_order",
+      "count": 0
+    },
+    {
+      "relation": "orders_customer",
+      "count": 0
+    }
+  ],
+  "repeats": [
+    {
+      "people": 96096,
+      "returning_buyers": 2997,
+      "pct": "3.1187562437562438"
+    }
+  ],
+  "reviews_per_order": [
+    {
+      "n": 1,
+      "orders": 98126
+    },
+    {
+      "n": 2,
+      "orders": 543
+    },
+    {
+      "n": 3,
+      "orders": 4
+    }
+  ],
+  "chronology": [
+    {
+      "approval_before_purchase": 0,
+      "delivery_before_purchase": 0,
+      "carrier_before_approval": 1359
+    }
+  ],
+  "files": {
+    "olist_customers_dataset.csv": "c26c17f59f3027a6a0dbeb8f1fa373c38f3323ecc84f225a8f4820e5bb288df8",
+    "olist_order_items_dataset.csv": "4f6abdbbc94036d0df4a76fa0520c072e31a40119d70f7f370fba1e2285d2bcb",
+    "olist_order_payments_dataset.csv": "61674868ed7b872aac3dcd95bf774448a88f6426b183f21be55f75af021ffdec",
+    "olist_order_reviews_dataset.csv": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7",
+    "olist_orders_dataset.csv": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf",
+    "olist_products_dataset.csv": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc",
+    "olist_sellers_dataset.csv": "31eb9bd50d684526a78f2389413ce61841e97692de7b828fe7d956b534586312",
+    "product_category_name_translation.csv": "a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278"
+  }
+}
