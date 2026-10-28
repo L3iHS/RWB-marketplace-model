@@ -12,3 +12,13 @@ __pycache__/
 # Локальные настройки редакторов
 .idea/
 .vscode/
+
+# Локальное Python-окружение и результаты профилирования
+.venv/
+data/profile_raw.json
+
+# Сгенерированный комплект сдачи
+/dist/
+
+# Автосохранения Jupyter
+.ipynb_checkpoints/

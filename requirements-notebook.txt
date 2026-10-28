@@ -1,0 +1,9 @@
+# Отдельные зависимости для исследовательского notebook и HTML-экспорта.
+# Основная SQL-модель требует только psycopg2-binary.
+psycopg2-binary>=2.9,<3
+pandas>=2.2,<4
+matplotlib>=3.9,<4
+nbformat>=5.10,<6
+nbclient>=0.10,<1
+nbconvert>=7.16,<8
+ipykernel>=6.29,<8
