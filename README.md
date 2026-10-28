@@ -23,7 +23,8 @@
 
 Основной стек — PostgreSQL 16 и SQL. Python используется для загрузки, выгрузки ответов и тестов. Локальное окружение запускается через Docker Compose.
 
-**Дашборд:** [localhost:3000](http://localhost:3000) после запуска backend/frontend.
+**Дашборд:** [y.cloud-path.ru](https://y.cloud-path.ru) — серверная демонстрация;
+[localhost:3000](http://localhost:3000) после локального запуска backend/frontend.
 [Инструкция и показатели](docs/dashboard.md), [история категорий и адресов](docs/history.md),
 [записка о решениях](docs/decisions.md).
 

@@ -15,8 +15,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 import psycopg2
 
+from backend.cache import DashboardCache
+
 app = FastAPI(title='Marketplace Analytics', version='1.0.0')
 logger = logging.getLogger(__name__)
+dashboard_cache = DashboardCache()
 
 DEFINITIONS = [
     dict(id='revenue_brl', label='Товарный оборот', formula='SUM(goods_amount)', grain='Заказ',
@@ -243,10 +246,27 @@ def selected_snapshot(dataset):
     return snapshot('marketplace_demo_dashboard') if dataset == 'demo' else snapshot()
 
 
+def dashboard_cache_key(cur, dataset, params):
+    # Идентификаторы и данные читаются из одного RR-снимка. OID меняется при
+    # пересборке core, snapshot token также замечает прямые записи без публикации.
+    cur.execute("""SELECT current_database(), 'core.orders'::regclass::oid,
+        pg_current_snapshot()::text, to_regclass('ops.current_dataset')""")
+    database, orders_oid, snapshot_token, publication = cur.fetchone()
+    version = 'original'
+    if publication is not None:
+        cur.execute('SELECT version_id FROM ops.current_dataset')
+        current = cur.fetchone()
+        if current:
+            version = current[0]
+    return (database, orders_oid, snapshot_token, version, dataset,
+            params['date_from'], params['date_to'], params['state'])
+
+
 @app.get('/api/dashboard')
 def dashboard(params=Depends(parse_filters), dataset: Literal['original', 'demo'] = 'original'):
     with selected_snapshot(dataset) as cur:
-        return dashboard_data(cur, params)
+        key = dashboard_cache_key(cur, dataset, params)
+        return dashboard_cache.get_or_compute(key, lambda: dashboard_data(cur, params))
 
 
 @app.get('/api/export')
