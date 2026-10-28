@@ -1,6 +1,6 @@
 # Дашборд аналитика в Metabase
 
-Исходники: `metabase/questions/*.sql`. Скрипт `scripts/create_metabase_dashboard.ps1`
+Исходники: `metabase/questions/*.sql`. Скрипт `scripts/create_metabase_dashboard.py`
 создаёт отдельную коллекцию и девять карточек в Metabase: три KPI, два графика,
 продавцы, категории, детали заказов и качество данных.
 
@@ -8,13 +8,13 @@
 
 В корне проекта запустить Docker Desktop, затем:
 
-```powershell
+```sh
 docker compose up -d postgres metabase
 ```
 
 Если данные ещё не загружены и модель не собрана:
 
-```powershell
+```sh
 docker compose run --rm app setup
 docker compose run --rm app build
 docker compose run --rm app check
@@ -24,16 +24,20 @@ docker compose run --rm app check
 PostgreSQL, сервер `postgres`, порт `5432`, база `marketplace`, пользователь
 и пароль `hack`. Дождаться синхронизации структуры.
 
-В PowerShell запустить:
+В терминале запустить (Python 3, дополнительные пакеты не нужны):
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/create_metabase_dashboard.ps1
+```sh
+python scripts/create_metabase_dashboard.py
 ```
 
-ExecutionPolicy применяется только к этому процессу. Скрипт спросит email и
-пароль в системном окне; не сохраняет пароль в файлы. Если автоматический поиск
-источника не сработал, указать `-DatabaseId N`, где N — ID Marketplace из URL
-его настроек. `-Url` позволяет указать другой адрес Metabase.
+Скрипт спросит email и пароль в терминале; ввод пароля скрыт, пароль не сохраняется
+в файлы. Если автоматический поиск источника не сработал, указать `--database-id N`,
+где N — ID Marketplace из URL его настроек. `--url` позволяет указать другой адрес Metabase.
+Для проверки файлов SQL без подключения к серверу:
+
+```sh
+python scripts/create_metabase_dashboard.py --validate-only
+```
 
 Повторный запуск останавливается, если коллекция уже существует, чтобы не
 перезаписать пользовательские изменения. При частичной ошибке созданная
