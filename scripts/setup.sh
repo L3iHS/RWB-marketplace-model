@@ -75,7 +75,7 @@ ok "данные на месте: $CSV_COUNT файлов"
 # --- 3. Python ------------------------------------------------------
 step "Проверяю Python"
 
-if command -v python3 >/dev/null 2>&1; then PY=python3
+if command -v python.exe >/dev/null 2>&1; then PY=python.exe
 elif command -v python >/dev/null 2>&1; then PY=python
 else die "не найден python" "Установите Python 3.10 или новее."; fi
 
